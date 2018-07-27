@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <p>&nbsp;</p>
+      <p> Select article to load: <input type="file" name="article"> </p>
+      <p> <button type="submit">Upload</button> </p>
+  </form>
+{% endblock %}

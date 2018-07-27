@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% if infos.title %}
+    {% block title %}
+        {{ infos.title }}
+    {% endblock %}
+{% endif %}
+
+
+{% block meta %}
+    {% if infos %}
+        {% for key, value in infos.items %}
+             <meta name="{{ key }}" content="{{ value }}">
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+
+{% block stylesheet %}
+{% endblock %}
+
+{% block content %}
+    <!--<div style="border: 2px solid green; padding:0px 5px;">-->
+
+    <div style="padding:20px;">
+    {{ content |safe }}
+    </div>
+{% endblock %}

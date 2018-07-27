@@ -1,0 +1,13 @@
+/* base.css */
+
+/*h1{
+    font-size: large;
+    font-weight: bold;
+    font-style: italic;
+}*/
+
+pre.code{
+    margin-left:5px;
+    border: 1px solid gray;
+    border-radius: 5px;
+}

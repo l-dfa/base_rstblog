@@ -1,0 +1,236 @@
+# rstsite/rstblog/models.py
+#     __name__ == 'rstblog.models'
+
+import pdb
+import pytz
+import xml.etree.ElementTree as ET
+from pathlib       import Path
+
+#from datetime import date
+from datetime import datetime
+
+from django.contrib.auth.models import User
+from django.db.utils   import IntegrityError
+from django.core.exceptions import ValidationError
+from django.conf       import settings
+from django.db         import models
+from django.urls       import reverse
+from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
+
+from concurrency.fields import IntegerVersionField
+
+try:
+    ARTICLES_DIR = Path(settings.RSTBLOG['ARTICLES_DIR'])
+except:
+    ARTICLES_DIR = Path(settings.BASE_DIR) / 'contents/articles'
+    
+SHORT_LEN  = 50
+MEDIUM_LEN = 250
+LONG_LEN   = 2000
+
+class Author(models.Model):
+    '''author: article author
+    
+    fields:
+        - name
+        - last name
+        - username
+        - '''
+    username = models.CharField(
+        'name',
+        max_length=SHORT_LEN,
+        null=True,
+        blank=True,
+        default=None,
+        unique=True,)
+    name = models.CharField(
+        'name',
+        max_length=MEDIUM_LEN,
+        null=False,
+        blank=False,
+        unique=True,)
+
+    def __str__(self):
+        return self.name
+
+        
+class Category(models.Model):
+    '''category: article category
+    
+    fields:
+        - name 
+        
+    initials: (how set them?)
+        CATEGORIES = (
+            'information tecnology',
+            'opinion',
+            'review',
+            'science',
+            'uncategorized',        )
+    '''
+        
+    name = models.CharField(
+        'name',
+        max_length=SHORT_LEN,
+        null=False,
+        blank=False,
+        unique=True,)
+        
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "categories"
+
+        
+    #def get_uncategorized(self):
+    #    return Category.objects.get('uncategorized')
+
+
+class Article(models.Model):
+    '''article: blog article 
+    
+    fields:
+        - title
+        - created
+        - file
+        - language
+        - last modified
+        - slug 
+        - summary
+        - authors         m2m 
+        - category        fKey
+        - translation_of  fKey
+        '''
+    ENGLISH  = 'en'
+    ITALIAN  = 'it'
+    LANGUAGE = (
+        (ENGLISH, 'english'),
+        (ITALIAN, 'italian'),
+    )
+    title = models.CharField(
+        'title',
+        max_length=MEDIUM_LEN,
+        null=False,
+        blank=False,
+        default='',
+        unique=True,)
+    created = models.DateTimeField(
+        null=True,
+        blank=True,
+        default=None)
+    file = models.CharField(
+        'file',
+        #upload_to=ARTICLES_DIR,
+        max_length=MEDIUM_LEN,
+        null=False,
+        blank=False,
+        unique=True,)
+    language = models.CharField(
+        'language',
+        max_length = 2,
+        null=False,
+        blank = False,
+        choices=LANGUAGE,
+        default = 'it', )
+    modified = models.DateTimeField(
+        null=True,
+        blank=True,
+        default=None)
+    summary = models.CharField(
+        'summary',
+        max_length=LONG_LEN,
+        null=True,
+        blank=False,
+        default='', )
+    slug = models.SlugField(
+        'slug',
+        null=False,
+        blank=False,
+        unique=True,
+        default=None, )
+    hit = models.IntegerField(
+        'hit',
+        null=False,
+        blank=False,
+        unique=False,
+        default=1, )
+    record_created  = models.DateTimeField(auto_now_add=True)
+    record_modified = models.DateTimeField(auto_now=True)
+    version = IntegerVersionField()     # manage optimistic lock
+    
+    authors = models.ManyToManyField(  # translators in case of translation_of
+        Author,
+        related_name='wrote',
+        verbose_name='authors',
+        default=None, )
+    category = models.ForeignKey(      # link to category
+        Category,
+        on_delete=models.SET_DEFAULT,
+        null=False,
+        blank=False,
+        default=None,
+        #default=get_uncategorized,    # how set default to UNCATEGORIZED?
+        )
+    translation_of = models.ForeignKey( # link to original article
+        'self',
+        on_delete=models.SET_DEFAULT,
+        null=True,
+        blank=True,
+        related_name='translated_by',
+        verbose_name='translation_of',
+        default=None, )
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('rstblog:show', args=[self.slug])
+        
+    def save(self, *args, **kwargs):
+        try:
+            c = self.category
+        except:
+            self.category = Category.objects.get(name='uncategorized')
+        super().save(*args, **kwargs)    
+        
+        
+from django import forms
+from django.contrib import admin
+
+# BEWARE: these must be after the definition of all the necessary models
+#  so, they are at the end of this module
+# this, and the next three, are derived from
+# https://stackoverflow.com/questions/454436/unique-fields-that-allow-nulls-in-django
+# about 'Unique fields that allow nulls in Django'
+class ArticleForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        fields = ('title', 'created', 'file', 
+            'language', 'modified', 'summary',
+            'slug', 
+            'authors', 
+            'category',
+            'translation_of', )
+    def clean_slug(self):
+        return self.cleaned_data['slug'] or None
+
+        
+class ArticleAdmin(admin.ModelAdmin):
+    form = ArticleForm
+
+    
+class AuthorForm(forms.ModelForm):
+    class Meta:
+        model = Author
+        fields = ('username', 'name', )
+    def clean_username(self):
+        return self.cleaned_data['username'] or None
+
+        
+class AuthorAdmin(admin.ModelAdmin):
+    form = AuthorForm
+
+    
+    
