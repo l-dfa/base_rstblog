@@ -96,7 +96,7 @@ class Article(models.Model):
         - created
         - file
         - language
-        - last modified
+        - modified
         - slug 
         - summary
         - authors         m2m 
@@ -108,6 +108,14 @@ class Article(models.Model):
     LANGUAGE = (
         (ENGLISH, 'english'),
         (ITALIAN, 'italian'),
+    )
+    HTML  = 'html'
+    MARKDOWN  = 'markdown'
+    reST  = 'reST'
+    MARKUP = (
+        (HTML, 'html'),
+        (MARKDOWN, 'markdown'),
+        (reST, 'reST'),
     )
     title = models.CharField(
         'title',
@@ -134,6 +142,14 @@ class Article(models.Model):
         blank = False,
         choices=LANGUAGE,
         default = 'it', )
+    markup = models.CharField(
+        'markup_language',
+        max_length = SHORT_LEN,
+        null=False,
+        blank = False,
+        choices=MARKUP,
+        unique=False,
+        default = 'reST', )
     modified = models.DateTimeField(
         null=True,
         blank=True,
