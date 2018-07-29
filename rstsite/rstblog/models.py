@@ -111,11 +111,11 @@ class Article(models.Model):
     )
     HTML  = 'html'
     MARKDOWN  = 'markdown'
-    reST  = 'reST'
+    reST  = 'restructuredtext'
     MARKUP = (
         (HTML, 'html'),
         (MARKDOWN, 'markdown'),
-        (reST, 'reST'),
+        (reST, 'restructuredtext'),
     )
     title = models.CharField(
         'title',
@@ -141,7 +141,7 @@ class Article(models.Model):
         null=False,
         blank = False,
         choices=LANGUAGE,
-        default = 'it', )
+        default = ITALIAN, )
     markup = models.CharField(
         'markup_language',
         max_length = SHORT_LEN,
@@ -149,7 +149,7 @@ class Article(models.Model):
         blank = False,
         choices=MARKUP,
         unique=False,
-        default = 'reST', )
+        default = reST, )
     modified = models.DateTimeField(
         null=True,
         blank=True,
@@ -224,7 +224,8 @@ class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
         fields = ('title', 'created', 'file', 
-            'language', 'modified', 'summary',
+            'language', 'markup', 'modified',
+            'summary',
             'slug', 
             'authors', 
             'category',
