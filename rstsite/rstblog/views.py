@@ -3,6 +3,7 @@
 import os
 import pdb
 import pytz
+import re
 import xml.etree.ElementTree as ET
 from datetime      import datetime
 from pathlib       import Path
@@ -37,7 +38,43 @@ try:
 except:
     ARTICLES_DIR = Path(settings.BASE_DIR) / 'contents/articles'
 
-def get_content(p):
+try:
+    START_CONTENT_SIGNAL = settings.RSTBLOG['START_CONTENT_SIGNAL']
+except:
+    START_CONTENT_SIGNAL = '.. hic sunt leones'
+    
+class SUFFIX:
+    reST = '.rst'
+    markdown = '.md'
+    html = '.html'
+    text = '.txt'
+    
+
+def separate(grand_content):
+    ''' return input slitted in two sections, based on the signal START_CONTENT_SIGNAL
+    
+    parameters:
+        - gran_content          str, all the file contents as string
+    
+    return: a (attributes, content, ) tuple of strings
+    
+    note. tpical START_CONTENT_SIGNAL is '.. hic sunt leones' string '''
+    
+    result = None
+    #pattern = f"(?P<attributes>.*)^{START_CONTENT_SIGNAL}$(?P<content>.*)"
+    #m = re.search(pattern, grand_content, flags=re.M+re.S)
+    #if m:
+    #    result =  (m.group('attributes'), m.group('content'), )
+    #return result
+    ndx = grand_content.find(START_CONTENT_SIGNAL)
+    if ndx != -1:
+        attributes = grand_content[:ndx]
+        content = grand_content[ndx+len(START_CONTENT_SIGNAL):]
+        result = (attributes, content, )
+    
+    return result
+
+def get_file_content(p):
     '''get file content as str
     
     parameters:
@@ -95,10 +132,27 @@ def upload_file(request, item_type='article', dirdst=Path(ARTICLES_DIR)):
 
     
 def get_record(dst):
-    '''get fields infos from reST file'''
+    '''get fields infos from file
     
-    content = get_content(dst)
-    record = docinfos(content)
+    params:
+        - dst         Path, of file to elaborate
+    
+    returns: a (record, autors, ) tuple, with:
+        - record      dict, of file attributes
+        - authors     tuple, with a SINGLE author
+        
+    note. get attributes and content splitting file by START_CONTENT_SIGNAL.
+        if START_CONTENT_SIGNAL there isn't, create an empty dictionary
+        and populate it with default values
+    '''
+    
+    file_content = get_file_content(dst)
+    result = separate(file_content.decode('utf-8'))
+    if result:
+        attributes, content = result
+        record = docinfos(attributes)
+    else:
+        record = dict()
     record['file'] = dst.name
     # get title
     if not record.get('title'):
@@ -113,6 +167,13 @@ def get_record(dst):
         c = Category.objects.get(name='uncategorized')
     record['category'] = c
     # get (SINGLE) author
+    if record.get('translation_of'):
+        original = None
+        try:
+            original = Article.objects.get(title=record.get('translation_of'))
+        except:
+            raise ValueError(f'article {record["title"]} is a translation of a non existent article: {record.get("translation_of")}')
+        record['translation_of'] = original
     a = None
     authors = tuple()
     if record.get('author'):
@@ -187,16 +248,31 @@ def load_article(request):
 
 def show(request, slug=''):
     '''shows a reStructuredText file as html'''
-    
+    #pdb.set_trace()
     article = get_object_or_404(Article, slug=slug)
     
     try:
         p = ARTICLES_DIR / article.file
-        p = p.with_suffix('.rst')
-        content = rstcontent2html(p)
+        #p = p.with_suffix('.rst')
+        #content = rstcontent2html(p)
         #pdb.set_trace()
-        scontent = get_content(p)
-        infos = docinfos(scontent)
+        #scontent = get_content(p)
+        #infos = docinfos(scontent)
+        file_content = get_file_content(p)
+        result = separate(file_content.decode('utf-8'))
+        if result:
+            content = result[1][:]
+        else:
+            content = file_content[:]
+        if ( article.markup == 'restructuredtext'
+             or p.suffix == SUFFIX.reST ):
+            content = rstcontent2html(content)
+        elif ( article.markup == 'html'
+             or p.suffix == SUFFIX.html ):
+            pass
+        else:
+            raise ValueError(f'{article.markup} is a markup language not supported yet')
+             
     except:
         raise Http404()
     
@@ -209,7 +285,7 @@ def show(request, slug=''):
         pass
 
     data = { 'content': content, 
-             'infos': infos,    }
+             'infos': article,    }
              
     return render( request, 'show.html', data, )
 
@@ -223,7 +299,26 @@ def index(request):
     return render( request, 'index.html', data )
 
     
-def rstcontent2html(p):
+def rstcontent2html(content):
+    '''convert rst file content to html
+    
+    parameters:
+        - content        str, to file to convert
+        
+    return: a string,
+            rise ValueError if p isn't file
+    '''
+
+    extra_settings = {
+        'initial_header_level': 3,
+        'doctitle_xform' : 0,
+        'syntax_highlight': 'short', }  # Possible values: 'long', 'short', 'none' 
+    #pdb.set_trace()
+    parts = publish_parts(content, writer_name='html', settings_overrides=extra_settings, )
+    # in a previous version was parts['html_body']; but this includes docinfo section
+    return parts['body'][:]
+
+def rstcontent2html_0(p):
     '''convert rst file content to html
     
     parameters:
@@ -247,7 +342,6 @@ def rstcontent2html(p):
     parts = publish_parts(content, writer_name='html', settings_overrides=extra_settings, )
     # in a previous version was parts['html_body']; but this includes docinfo section
     return parts['body'][:]
-
     
 # this is from http://code.activestate.com/recipes/578948-flattening-an-arbitrarily-nested-list-in-python/
 #   changing argument from list to pathlib Path directory

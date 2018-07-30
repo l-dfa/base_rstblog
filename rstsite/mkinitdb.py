@@ -49,7 +49,8 @@ DT_FORMAT = '%Y-%m-%d %H:%M:%S'  # datetime format year-month-day hour.minute.se
 CATEGORIES = [
     {'name': 'information technology', },
     {'name': 'opinion', },
-    {'name': 'review', },
+    {'name': 'reminder', },
+    {'name': 'note', },
     {'name': 'science', },
     {'name': 'uncategorized', },
     ]
@@ -75,6 +76,23 @@ ARTICLES = [
       'language': 'it',
       'created': '2018-07-22 12:01:01',
       'modified': '2018-07-22 13:01:01',
+      'markup': 'restructuredtext',
+      },
+    { 'title': 'Installing a Django application using Nginx and Gunicorn',
+      'file': 'django_deployment.en.rst',
+      'category': 'information technology',
+      'authors': ('Luciano De Falco Alfano', 'Giuseppe Verdi', ),
+      'summary': ('Installing a Django application in a production '
+                  'web server is not easy. '
+                  'In this article we will see the necessary steps to made it '
+                  'in a CentOs 7 server, with Nginx as web server and '
+                  'Gunicorn middleware.' ), 
+      'slug': 'Installing-a-Django-application-using-Nginx-and-Gunicorn',
+      'language': 'en',
+      'created': '2018-07-31 12:01:01',
+      'modified': '2018-07-31 13:01:01',
+      'translation_of': 'Installare una applicazione Django usando Nginx e Gunicorn',
+      'markup': 'restructuredtext',
       },
     { 'title': 'esempio vuoto',
       'file': 'esempio_vuoto.txt',
@@ -84,6 +102,7 @@ ARTICLES = [
       'language': 'it',
       'created': '2018-07-20 12:01:01',
       'modified': '2018-07-22 13:01:01',
+      'markup': 'restructuredtext',
       },
  ]
 
@@ -128,6 +147,8 @@ def add_articles():
             summary = ad.get('summary'),
             category=c, )
         a.save()
+        if ad.get('markup'):
+            a.markup = ad.get('markup')
         if ad.get('created'):
             t = datetime.strptime(ad.get('created'), '%Y-%m-%d %H:%M:%S')
             t = pytz.timezone(settings.TIME_ZONE).localize(t)
@@ -149,6 +170,14 @@ def add_articles():
                 pass
             if author:
                 a.authors.add(author)     # WARN: ManyToMany uses id
+        if ad.get('translation_of'):
+            original = None
+            try:
+                original = Article.objects.get(title=ad.get('translation_of'))
+            except:
+                pass
+            if original:
+                a.translation_of = original
         a.save()
 
 
