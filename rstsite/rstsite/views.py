@@ -14,6 +14,7 @@ from django.http      import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 
+from rstblog.views import get_file_content
 from rstblog.views import rstcontent2html 
 from rstblog.views import upload_file
 
@@ -48,7 +49,8 @@ def show(request, path=''):
     p = p.with_suffix('.rst')
     #pdb.set_trace()
     try:
-        content = rstcontent2html(p)
+        file_content = get_file_content(p)
+        content = rstcontent2html(file_content)
     except:
         raise Http404()
     #data = { 'content': parts['html_body'],
