@@ -48,9 +48,9 @@ DT_FORMAT = '%Y-%m-%d %H:%M:%S'  # datetime format year-month-day hour.minute.se
 
 CATEGORIES = [
     {'name': 'information technology', },
-    {'name': 'opinion', },
-    {'name': 'reminder', },
     {'name': 'note', },
+    {'name': 'opinion', },
+    {'name': 'review', },
     {'name': 'science', },
     {'name': 'uncategorized', },
     ]
