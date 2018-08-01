@@ -15,4 +15,5 @@ urlpatterns = [
     path('load-article', views.load_article, name='load_article'),
     path('reset-article-table', views.reset_article_table, name='reset_article_table'),
     path('show/<slug>', views.show, name='show'),
+    path('stats', views.show_stats, name='show_stats'),
 ]

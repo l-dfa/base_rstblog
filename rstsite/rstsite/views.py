@@ -56,7 +56,8 @@ def show(request, path=''):
     #data = { 'content': parts['html_body'],
     #         'path': path,    }
     data = { 'content': content,
-             'path':    path,    }
+             'path':    path,
+             'page_id': f'show {p.name}'}
              
     return render( request, 'show.html', data, )
 

@@ -5,6 +5,7 @@ import pdb
 import pytz
 #import re
 import xml.etree.ElementTree as ET
+from copy import copy
 from datetime      import datetime
 from pathlib       import Path
 
@@ -36,24 +37,47 @@ from .const import SUFFIX
 #    index(request)        #176
 #    show(request, slug)   #161
 
-
-#try:
-#    ARTICLES_DIR = Path(settings.RSTBLOG['ARTICLES_DIR'])
-#except:
-#    ARTICLES_DIR = Path(settings.BASE_DIR) / 'contents/articles'
-#
-#try:
-#    START_CONTENT_SIGNAL = settings.RSTBLOG['START_CONTENT_SIGNAL']
-#except:
-#    START_CONTENT_SIGNAL = '.. hic sunt leones'
-#
-#class SUFFIX(object):
-#    reST = '.rst'
-#    markdown = '.md'
-#    html = '.html'
-#    text = '.txt'
+def get_stats():
+    ''' statistics about articles:
     
+    return a dictionary with these keys and values:
+        - n: int        number of original articles (not a trnslation)
+        - nt: int       number of translations
+        - sl: set       set of used languages
+        - sc: set       set of used categories
+        - arg-cat1: {lng1: int, lng2: int, ...)     number of category1 articles {language1, language2, ...}
+        - arg-cat2: (int, int)     number of category2 articles (original, translated,)
+        - ... '''
+        
+    result = dict()
+    n = Article.objects.filter(translation_of__isnull=True).count()
+    nt = Article.objects.filter(translation_of__isnull=False).count()
+    langs = Article.objects.values_list('language', flat=True)
+    cats = Article.objects.values_list('category__name', flat=True)
+    sl = set(langs)
+    sc = set(cats)
+    result['n'] = n
+    result['nt'] = nt
+    result['sl'] = sl
+    result['sc'] = sc
+    for cat in sc:
+        dcat = dict()
+        for lng in sl:
+            lc = Article.objects.filter(category__name=cat, language=lng).count()
+            dcat[lng] = lc
+        result[cat] = copy(dcat)
+    #pdb.set_trace()
+    return result
 
+def show_stats(request):
+    '''return statisitcs about articles in blog'''
+    stats = get_stats()
+    data = { 'stats': stats,
+             'page_id': 'rstblog:show_stats'    }
+             
+    return render( request, 'show_stats.html', data, )
+    
+    
 def separate(grand_content):
     ''' return input slitted in two sections, based on the signal START_CONTENT_SIGNAL
     
@@ -151,6 +175,7 @@ def get_record(dst):
     '''
     
     file_content = get_file_content(dst)
+    #pdb.set_trace()
     result = separate(file_content.decode('utf-8'))
     if result:
         attributes, content = result
