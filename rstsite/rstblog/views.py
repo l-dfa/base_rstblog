@@ -3,7 +3,7 @@
 import os
 import pdb
 import pytz
-import re
+#import re
 import xml.etree.ElementTree as ET
 from datetime      import datetime
 from pathlib       import Path
@@ -26,6 +26,10 @@ from .models import Article
 from .models import Author
 from .models import Category
 
+from .const import ARTICLES_DIR
+from .const import LANGUAGES
+from .const import START_CONTENT_SIGNAL
+from .const import SUFFIX
 
 # memo
 #    load_article(request) #125
@@ -33,21 +37,21 @@ from .models import Category
 #    show(request, slug)   #161
 
 
-try:
-    ARTICLES_DIR = Path(settings.RSTBLOG['ARTICLES_DIR'])
-except:
-    ARTICLES_DIR = Path(settings.BASE_DIR) / 'contents/articles'
-
-try:
-    START_CONTENT_SIGNAL = settings.RSTBLOG['START_CONTENT_SIGNAL']
-except:
-    START_CONTENT_SIGNAL = '.. hic sunt leones'
-    
-class SUFFIX:
-    reST = '.rst'
-    markdown = '.md'
-    html = '.html'
-    text = '.txt'
+#try:
+#    ARTICLES_DIR = Path(settings.RSTBLOG['ARTICLES_DIR'])
+#except:
+#    ARTICLES_DIR = Path(settings.BASE_DIR) / 'contents/articles'
+#
+#try:
+#    START_CONTENT_SIGNAL = settings.RSTBLOG['START_CONTENT_SIGNAL']
+#except:
+#    START_CONTENT_SIGNAL = '.. hic sunt leones'
+#
+#class SUFFIX(object):
+#    reST = '.rst'
+#    markdown = '.md'
+#    html = '.html'
+#    text = '.txt'
     
 
 def separate(grand_content):
@@ -251,16 +255,18 @@ def show(request, slug=''):
     #pdb.set_trace()
     article = get_object_or_404(Article, slug=slug)
     
+    # preaparing translations as [(language, slug), (language, slug), ...]
+    trans = article.get_translations()
+    translations = [(LANGUAGES.get(t.language), t.slug, ) for t in trans]
+
+    # preparing article content as html
     try:
         p = ARTICLES_DIR / article.file
-        #p = p.with_suffix('.rst')
-        #content = rstcontent2html(p)
-        #pdb.set_trace()
-        #scontent = get_content(p)
-        #infos = docinfos(scontent)
+        infos = None
         file_content = get_file_content(p)
         result = separate(file_content.decode('utf-8'))
         if result:
+            infos = docinfos(result[0])
             content = result[1][:]
         else:
             content = file_content[:]
@@ -272,12 +278,10 @@ def show(request, slug=''):
             pass
         else:
             raise ValueError(f'{article.markup} is a markup language not supported yet')
-             
     except:
         raise Http404()
     
-    # increments article counter, if fails probably due to concurrent writes:
-    #    ignores it
+    # increments article counter, if fails probably due to concurrent writes: ignoring it
     try:
         article.hit += 1
         article.save()
@@ -285,7 +289,9 @@ def show(request, slug=''):
         pass
 
     data = { 'content': content, 
-             'infos': article,    }
+             'infos': infos,
+             'article': article,
+             'translations': translations, }
              
     return render( request, 'show.html', data, )
 
@@ -294,7 +300,14 @@ def index(request):
     ''' list articles '''
     
     articles = Article.objects.filter(translation_of__isnull=True).order_by('-created')
-    data = { 'articles': articles, }
+    translations = dict()
+    for article in articles:
+        trans = article.get_translations()
+        if len(trans) > 0:
+            translations[article.title] = [(LANGUAGES.get(t.language), t.slug, ) for t in trans]
+    #pdb.set_trace()
+    data = { 'articles':     articles,
+             'translations': translations, }
     
     return render( request, 'index.html', data )
 
@@ -318,30 +331,6 @@ def rstcontent2html(content):
     # in a previous version was parts['html_body']; but this includes docinfo section
     return parts['body'][:]
 
-def rstcontent2html_0(p):
-    '''convert rst file content to html
-    
-    parameters:
-        - p        path, to file to convert
-        
-    return: a string,
-            rise ValueError if p isn't file
-    '''
-    if p.is_file():
-        # Note mode='rb'. Binary mode necessary to handle accented characters
-        with p.open(mode='rb') as f:
-            content = f.read()
-    else:
-        raise ValueError("File {} does not exist".format(path))
-
-    extra_settings = {
-        'initial_header_level': 3,
-        'doctitle_xform' : 0,
-        'syntax_highlight': 'short', }  # Possible values: 'long', 'short', 'none' 
-    #pdb.set_trace()
-    parts = publish_parts(content, writer_name='html', settings_overrides=extra_settings, )
-    # in a previous version was parts['html_body']; but this includes docinfo section
-    return parts['body'][:]
     
 # this is from http://code.activestate.com/recipes/578948-flattening-an-arbitrarily-nested-list-in-python/
 #   changing argument from list to pathlib Path directory
@@ -429,6 +418,32 @@ def norm_dt(s):
     return ret
     
 ##### OLD GLORIES
+
+# orginal version: read file content
+def rstcontent2html_1(p):
+    '''convert rst file content to html
+    
+    parameters:
+        - p        path, to file to convert
+        
+    return: a string,
+            rise ValueError if p isn't file
+    '''
+    if p.is_file():
+        # Note mode='rb'. Binary mode necessary to handle accented characters
+        with p.open(mode='rb') as f:
+            content = f.read()
+    else:
+        raise ValueError("File {} does not exist".format(path))
+
+    extra_settings = {
+        'initial_header_level': 3,
+        'doctitle_xform' : 0,
+        'syntax_highlight': 'short', }  # Possible values: 'long', 'short', 'none' 
+    #pdb.set_trace()
+    parts = publish_parts(content, writer_name='html', settings_overrides=extra_settings, )
+    # in a previous version was parts['html_body']; but this includes docinfo section
+    return parts['body'][:]
 
 # original version: use file name (path in arguments)
 def show_1(request, path=''):

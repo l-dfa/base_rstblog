@@ -99,7 +99,7 @@ ARTICLES = [
       'author': 'Luciano De Falco Alfano',
       'summary': 'a very easy summary',
       'slug': 'esempio-vuoti',
-      'language': 'it',
+      #'language': 'it',
       'created': '2018-07-20 12:01:01',
       'modified': '2018-07-22 13:01:01',
       'markup': 'restructuredtext',
@@ -149,6 +149,8 @@ def add_articles():
         a.save()
         if ad.get('markup'):
             a.markup = ad.get('markup')
+        if ad.get('language'):
+            a.language = ad.get('language')
         if ad.get('created'):
             t = datetime.strptime(ad.get('created'), '%Y-%m-%d %H:%M:%S')
             t = pytz.timezone(settings.TIME_ZONE).localize(t)

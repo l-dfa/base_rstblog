@@ -18,3 +18,8 @@ def tail(value, sep=None):
     else:
         result = splitted[1]
     return result[:]
+    
+@register.filter
+def length(value):
+    """return len(value)"""
+    return len(value)

@@ -20,10 +20,8 @@ from django.utils.translation import gettext_lazy as _
 
 from concurrency.fields import IntegerVersionField
 
-try:
-    ARTICLES_DIR = Path(settings.RSTBLOG['ARTICLES_DIR'])
-except:
-    ARTICLES_DIR = Path(settings.BASE_DIR) / 'contents/articles'
+from .const import ARTICLES_DIR
+from .const import LANGUAGES
     
 SHORT_LEN  = 50
 MEDIUM_LEN = 250
@@ -103,12 +101,12 @@ class Article(models.Model):
         - category        fKey
         - translation_of  fKey
         '''
-    ENGLISH  = 'en'
-    ITALIAN  = 'it'
-    LANGUAGE = (
-        (ENGLISH, 'english'),
-        (ITALIAN, 'italian'),
-    )
+    #ENGLISH  = 'en'
+    #ITALIAN  = 'it'
+    #LANGUAGE = (
+    #    (ENGLISH, 'english'),
+    #    (ITALIAN, 'italian'),
+    #)
     HTML  = 'html'
     MARKDOWN  = 'markdown'
     reST  = 'restructuredtext'
@@ -140,8 +138,10 @@ class Article(models.Model):
         max_length = 2,
         null=False,
         blank = False,
-        choices=LANGUAGE,
-        default = ITALIAN, )
+        #choices=LANGUAGE,
+        choices=list(LANGUAGES.items()),
+        #default = ITALIAN, )
+        default = list(LANGUAGES.keys())[0], )  # BEWARE.from py 3.6+ dict preserve keys order by insertion
     markup = models.CharField(
         'markup_language',
         max_length = SHORT_LEN,
@@ -203,6 +203,18 @@ class Article(models.Model):
 
     def get_absolute_url(self):
         return reverse('rstblog:show', args=[self.slug])
+        
+    def get_translations(self):
+        #pdb.set_trace()
+        if self.translation_of == None:
+            original = self
+            result = Article.objects.none()
+        else:
+            original = self.translation_of
+            result = Article.objects.filter(pk=original.pk)
+        result |= Article.objects.filter(translation_of=original.pk).exclude(pk=self.pk)
+        return result
+        
         
     def save(self, *args, **kwargs):
         try:

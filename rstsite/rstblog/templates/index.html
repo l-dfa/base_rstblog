@@ -7,7 +7,8 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Articles</h1>
+    <h2>Articles</h2>
+    
     {% for article in articles %}
     
         <div>
@@ -18,20 +19,34 @@
             <p style="font-size: x-small">
                 {% if article.hit %}
                     <b>Read</b> {{ article.hit }} times
-                    {% if article.created %};&nbsp;&nbsp;&nbsp; {% endif %}
+                    {% if article.created %} ;&nbsp;&nbsp;&nbsp; {% endif %}
                 {% endif %}
-                {% if article.created %}
-                    <b>Created</b> on {{ article.created }}
-                    {% if article.modified %};&nbsp;&nbsp;&nbsp; {% endif %}
+                {% if article.created %} 
+                    <b>Created</b> on {{ article.created|date:"d M Y" }}
+                    {% if article.modified %} ;&nbsp;&nbsp;&nbsp; {% endif %}
                 {% endif %}
                 {% if article.modified %}
-                    <b>Modified</b> on {{ article.modified}}
+                    <b>Modified</b> on {{ article.modified|date:"d M Y" }}
                 {% endif %}
+                {% for key, value in translations.items %}
+                    {% if key == article.title %}
+                        ;&nbsp;&nbsp;&nbsp;
+                        <span style="border: 1px solid red; border-radius: 2px;"> <b>Translation{{ value|length|pluralize }}</b>: &nbsp; 
+                        {% for language, slug in value %}
+                            <a href="{% url 'rstblog:show' slug %}">{{ language }}</a>
+                            {% if not forloop.last%} &nbsp; {% endif %}
+                        {% endfor %}
+                        </span>
+                    {% endif %}
+                {% comment %}
+                {% endcomment %}
+                {% endfor %}
             </p>
             <p style="font-size: small">
                 {% if article.summary %}
-                    <!-- <span style="font-style: italic;">Summary:</span> --> {{ article.summary }} </p>
+                    <!-- <span style="font-style: italic;">Summary:</span> --> {{ article.summary }}
                 {% endif %}
+            </p>
     {% empty %}
         <div><p> Sorry. No articles by now.</p></div>
     {% endfor %}

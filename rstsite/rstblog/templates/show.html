@@ -23,6 +23,34 @@
 
 {% block content %}
     <!--<div style="border: 2px solid green; padding:0px 5px;">-->
+    {% if article or translations %}
+        <div style="margin:5px;padding:5px;border: 1px solid black; border-radius: 2px;">
+            <p style="font-size: small;margin-bottom:0px;">
+                {% if article.author %}
+                    <b>By</b> {{ article.author.name }}
+                    {% if article.created %} ;&nbsp;&nbsp;&nbsp; {% endif %}
+                {% endif %}
+                {% if article.created %}
+                    <b>Created</b> on {{ article.created|date:"d M Y" }}
+                    {% if article.modified %} ;&nbsp;&nbsp;&nbsp; {% endif %}
+                {% endif %}
+                {% if article.modified %}
+                    <b>Modified</b> on {{ article.modified|date:"d M Y" }}
+                    {% if translations %} ;&nbsp;&nbsp;&nbsp; {% endif %}
+                {% endif %}
+                {% if translations %}
+                    <span style="border: 1px solid red; border-radius: 2px;"> <b>Translation{{ translations|length|pluralize }}</b>: &nbsp; 
+                    {% for language, slug in translations %}
+                        <a href="{% url 'rstblog:show' slug %}">{{ language }}</a>
+                        {% if not forloop.last%} &nbsp; {% endif %}
+                    {% endfor %}
+                    </span>
+                    {% comment %}
+                    {% endcomment %}
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
 
     <div style="padding:20px;">
     {{ content |safe }}
