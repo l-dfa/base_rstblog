@@ -12,6 +12,8 @@ from pathlib       import Path
 from docutils.core import publish_parts
 from docutils.core import publish_doctree
 
+from markdown import markdown
+
 from django.conf      import settings
 from django.contrib   import messages
 from django.contrib.auth.decorators import login_required
@@ -270,7 +272,7 @@ def load_article(request):
         else:
             msg = 'file missing, nothing to upload'
             messages.add_message(request, messages.ERROR, msg)
-        return redirect('rstblog:index')
+        return redirect('rstblog:show', slug=article.slug)
         
     return render( request, 'load_article.html' )
 
@@ -301,6 +303,11 @@ def show(request, slug=''):
         elif ( article.markup == 'html'
              or p.suffix == SUFFIX.html ):
             pass
+        elif ( article.markup == 'markdown'
+             or p.suffix == SUFFIX.markdown ):
+            content = markdown(content, extensions=[
+                'markdown.extensions.tables',
+                'markdown.extensions.footnotes',])
         else:
             raise ValueError(f'{article.markup} is a markup language not supported yet')
     except:

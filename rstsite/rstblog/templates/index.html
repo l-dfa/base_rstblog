@@ -7,16 +7,16 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Articles</h2>
+    <h3 class="hindex">Indexing {{ articles|length }} article{{ articles|length|pluralize }}</h3>
     
     {% for article in articles %}
     
         <div>
-            <h4>
+            <h5>
                 <a href="{% url 'rstblog:show' article.slug %}">{{ article.title }}</a>
-            </h4>
+            </h5>
             
-            <p style="font-size: x-small">
+            <p class="pattributes">
                 {% if article.hit %}
                     <b>Read</b> {{ article.hit }} times
                     {% if article.created %} ;&nbsp;&nbsp;&nbsp; {% endif %}
@@ -42,7 +42,7 @@
                 {% endcomment %}
                 {% endfor %}
             </p>
-            <p style="font-size: small">
+            <p class="psummary">
                 {% if article.summary %}
                     <!-- <span style="font-style: italic;">Summary:</span> --> {{ article.summary }}
                 {% endif %}

@@ -11,3 +11,15 @@ pre.code{
     border: 1px solid gray;
     border-radius: 5px;
 }
+
+.hindex{
+    margin-top:1rem;
+}
+
+.pattributes{
+    margin-bottom:0.5rem;
+    font-size: x-small;
+}
+.psummary{
+    font-size: small;
+}
