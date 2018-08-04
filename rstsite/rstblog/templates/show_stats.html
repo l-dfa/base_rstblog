@@ -32,7 +32,7 @@
         <ul>
         {% for k, v in stats.items %}
             {% if k in stats.sc %}
-                <li>{{ k }}: (&nbsp;
+                <li><a href="{% url 'rstblog:index_category' k %}">{{ k }}</a>:&nbsp;&nbsp;(&nbsp;
                     {% for lk, lv in v.items %}
                         {{ lk }}: {{ lv }}  {% if not forloop.last %}, &nbsp;{% endif %}
                     {% endfor %}

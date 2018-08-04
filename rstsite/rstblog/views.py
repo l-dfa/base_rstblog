@@ -328,10 +328,22 @@ def show(request, slug=''):
     return render( request, 'show.html', data, )
 
 
-def index(request):
+def index(request, category=''):
     ''' list articles '''
     
-    articles = Article.objects.filter(translation_of__isnull=True).order_by('-created')
+    articles = None
+    ctg = None
+    #pdb.set_trace()
+    if category=='':
+        articles = Article.objects.filter(translation_of__isnull=True).order_by('-created')
+    else:
+        try:
+            ctg = Category.objects.get(name=category)
+        except Exception as ex:
+            msg = f'category {category} unknown'
+            messages.add_message(request, messages.ERROR, msg)
+        articles = Article.objects.filter(translation_of__isnull=True, category=ctg.pk).order_by('-created')
+            
     translations = dict()
     for article in articles:
         trans = article.get_translations()
@@ -339,7 +351,8 @@ def index(request):
             translations[article.title] = [(LANGUAGES.get(t.language), t.slug, ) for t in trans]
     #pdb.set_trace()
     data = { 'articles':     articles,
-             'translations': translations, }
+             'translations': translations,
+             'category': category, }
     
     return render( request, 'index.html', data )
 
