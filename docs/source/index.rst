@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to rstblog documentation!
+Welcome to rstblog documentation
 ===================================
 
 ``rstblog`` project is about a simple blog driven by articles written
@@ -12,12 +12,12 @@ using reStructuredText markup language.
 This is its documentation.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
    
    Article author manual       <author_manual/author_manual>
-   Site manager manual         <manager_manual/manager_manual>
-   Details about how it works  <programmer_manual/programmer_manual>
+   (Empty) Site manager manual         <manager_manual/manager_manual>
+   (Empty) Details about how it works  <programmer_manual/programmer_manual>
    
 General introduction
 -----------------------
@@ -32,7 +32,7 @@ short: reST from now on). This is a method to sign a text achieving formatting e
 writing charactes in bold, or creating a table, or an html link
 to another document.
 
-And this fact is importanto to you as a user of this project. Why? we'll see.
+And this fact is important to you as a user of this project. Why? we'll see.
 
 Let's assume you have an ``rstblog`` installation functioning and 
 responding to address ``https://my.blog.org`` (original, isn't it?).
@@ -110,7 +110,7 @@ If this long introduction did not make you escape, and you are still
 interested to know better how use ``rstblog``, I can propose you
 these chapters:
 
-* an empty article :ref:`author manual`;
+* article :ref:`author manual`;
 * an empty site :ref:`manager manual`;
 * an empty :ref:`programmer manual`.
 
