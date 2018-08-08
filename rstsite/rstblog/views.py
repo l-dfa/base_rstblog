@@ -110,10 +110,12 @@ def get_file_content(p):
     parameters:
         - p         Path, of opening file
         
-    return: a string
+    return: a BYTES string
             ValueError if p isn't a file
             
-    note: open file in binary mode '''
+    note: 
+        - open file in binary mode to handle utf-8 chars
+        - again: the returned value, must be decoded to obtain a unicode string '''
     
     
     content = None
@@ -123,6 +125,7 @@ def get_file_content(p):
             content = f.read()
     else:
         raise ValueError("File {} does not exist".format(path))
+        
     return content
   
   
@@ -135,7 +138,11 @@ def upload_file(request, item_type='article', dirdst=Path(ARTICLES_DIR)):
         - dirdst      Path, destination directory (ARTICLES_DIR or PAGE_DIR)
     
     return: destination file as Path
-            could raise exception    '''
+            could raise exception    
+            
+    note: this is about upload file from client to server file system.
+        creating article db record from this file is reponsability of 
+    '''
     
     dst = None
     if request.method == 'POST' and request.FILES[item_type]:
@@ -169,11 +176,22 @@ def get_record(dst):
     
     returns: a (record, autors, ) tuple, with:
         - record      dict, of file attributes
-        - authors     tuple, with a SINGLE author
+        - authors     list, of authors
         
-    note. get attributes and content splitting file by START_CONTENT_SIGNAL.
-        if START_CONTENT_SIGNAL there isn't, create an empty dictionary
-        and populate it with default values
+    note.
+        - get attributes and content splitting file by START_CONTENT_SIGNAL.
+        - if START_CONTENT_SIGNAL there isn't, create an empty dictionary
+            and populate it with default values
+        - this functions may seems redundant. it isn't. after it we need
+            create the Article record. Here Article.authors is a 
+            m2m field: we could not load it immediatly. We need this steps:
+                - create the Article
+                - SAVE the article
+                - add authors to article
+                - save again
+            during the 1st step we need the record fields value EXCEPT
+            the authors. so we must split all the other fields (in record)
+            from authors.
     '''
     
     file_content = get_file_content(dst)
@@ -188,55 +206,58 @@ def get_record(dst):
     # get title
     if not record.get('title'):
         record['title'] = dst.name
-    #get category
-    c = None
-    if not record.get('category'):
-        record['category'] = 'uncategorized'
+    authors = []
+    if record.get('authors'):
+        authors.extend(copy(record.get('authors')))
     try:
-        c = Category.objects.get(name=record.get('category'))
+        del record['authors']
     except:
-        c = Category.objects.get(name='uncategorized')
-    record['category'] = c
-    # get (SINGLE) author
-    if record.get('translation_of'):
-        original = None
-        try:
-            original = Article.objects.get(title=record.get('translation_of'))
-        except:
-            raise ValueError(f'article {record["title"]} is a translation of a non existent article: {record.get("translation_of")}')
-        record['translation_of'] = original
-    a = None
-    authors = tuple()
-    if record.get('author'):
-        try:
-            a = Author.objects.get(name=record.get('author'))
-            authors = (a, )
-        except:
-            pass
-        finally:
-            del record['author']
+        pass
+    if record.get('translation_of') == '':
+        del record['translation_of']
+        #try:
+        #    a = Author.objects.get(name=record.get('author'))
+        #    authors = (a, )
+        #except:
+        #    pass
+        #finally:
+        #    del record['author']
     return (record, authors, )
 
 
 @login_required(login_url="/login/")
-def reset_article_table(request):
+def reset_article_table(request, dir=ARTICLES_DIR):
     '''clear and rebuild article table'''
     
-    #pdb.set_trace()
-    Article.objects.all().delete()
-    paths = flatten(ARTICLES_DIR)
+    all = Article.objects.all()
+    hits = dict()
+    for article in all:
+        hits[article.title] = article.hit
+    all.delete()
+    paths = flatten(dir)
     #articles = [str(p.relative_to(ARTICLES_DIR)) for p in paths]
     count = 0
     for p in paths:
+        article = None
         try:
-            # read article fields
-            record, authors = get_record(p)
-            article, created = Article.objects.update_or_create(
-                    file=p.name, defaults=record)
-            for a in authors:
-                article.authors.add(a)
-            article.save()
-            count += 1
+            article = cOu_article_record(p, must_be_original='yes')
+            if article:
+                if hits.get(article.title):
+                    article.hit = hits.get(article.title)
+                    article.save()
+                count += 1
+        except Exception as ex:
+            msg = 'error "{}" building record for {} article. action NOT completed'.format(ex, p.name, )
+            messages.add_message(request, messages.ERROR, msg)
+    for p in paths:
+        article = None
+        try:
+            article = cOu_article_record(p, must_be_original='no')
+            if article:
+                if hits.get(article.title):
+                    article.hit = hits.get(article.title)
+                    article.save()
+                count += 1
         except Exception as ex:
             msg = 'error "{}" building record for {} article. action NOT completed'.format(ex, p.name, )
             messages.add_message(request, messages.ERROR, msg)
@@ -244,11 +265,51 @@ def reset_article_table(request):
     messages.add_message(request, messages.INFO, msg)
     return redirect('rstblog:index')
 
+def cOu_article_record(pth, must_be_original='ignore'):
+    '''create or update article record from Path
+    
+    parameters:
+        - pth                   Path, to file to use
+        - must_be_original      str, 'yes', 'no', 'ignore' (or whatever else)
+                                  if 'yes' elaborate file only if original
+                                  'no' elaborate only if translation
+                                  'ignore' elaborate in any case
+    
+    return:
+        - article record
+        - None if ignore file
+        - could raise exception '''
+           
+    article = None
+    try:
+        record, authors = get_record(pth)
+        # if: must be original and is a translation
+        #     OR: must be translation and is original
+        #   BAIL OUT with None
+        if (    (must_be_original=='yes' and 'translation_of' in record)
+             or (must_be_original=='no' and not 'translation_of' in record)):
+            return article
+        if 'translation_of' in record and record['translation_of'] == None:
+            raise ValueError(f'{pth} is translation of an unknown article')
+        #  if the Article already exists, its fields are updated
+        article, created = Article.objects.update_or_create(
+                file=pth.name, defaults=record)
+        for author in authors:
+            a = Author.objects.get(name=author)
+            article.authors.add(a)
+        #if record.get('translation_of'):
+        #    translated = Article.objects.get(title=record.get('translation_of'))
+        #    article.translation_of = translated
+        article.save()
+    except Exception as ex:
+        raise
+    return article
     
 @login_required(login_url="/login/")
 def load_article(request):
     '''load a reST file and add/chg relative record '''
     
+    article = None
     # load file to MEDIA_ROOT and move it to ARTICLES_DIR
     # then get fields from file content (docinfo section)
     # and crete/update article record in DB
@@ -256,14 +317,7 @@ def load_article(request):
         if request.FILES['article']:
             try:
                 dst = upload_file(request, item_type='article', dirdst = Path(ARTICLES_DIR))
-                # read article fields
-                record, authors = get_record(dst)
-                #  if the Article already exists, its fields are updated
-                article, created = Article.objects.update_or_create(
-                        file=dst.name, defaults=record)
-                for a in authors:
-                    article.authors.add(a)
-                article.save()
+                article = cOu_article_record(dst, must_be_original='ignore')
                 msg = 'article {} loaded'.format( dst.name, )
                 messages.add_message(request, messages.INFO, msg)
             except Exception as ex:
@@ -272,7 +326,10 @@ def load_article(request):
         else:
             msg = 'file missing, nothing to upload'
             messages.add_message(request, messages.ERROR, msg)
-        return redirect('rstblog:show', slug=article.slug)
+        if article:
+            return redirect('rstblog:show', slug=article.slug)
+        else:
+            return redirect('rstblog:index')
         
     return render( request, 'load_article.html' )
 
@@ -389,14 +446,31 @@ def flatten(path):
             new_lis.append(item)
     return new_lis
 
+def get_field(area, field):
+    result = None
+    offset = len(f':{field.lower()}:')
+    n0 = area.find(f':{field.lower()}:')
+    if n0 != -1:
+        n1 = area.find('\n', n0)
+    if (n0 != -1 and n1 != -1):
+        result = area[n0+offset:n1]
+    elif (n0 != -1 and n1 == -1):
+        result = area[n0+offset:]
+    if result:
+        result = result.replace('\n', ' ')
+        result = result.strip()
+
+    return result
     
-def docinfos(content):
+def rough_docinfos(content):
     '''get docinfo fields from content
     
     params:
         - content    str, reST document
     
-    return: a dict with field names as keys and field bodies as values '''
+    return: a dict with field names as keys and field bodies as values 
+    
+    note: all unknown fields are discarded'''
             
     #pdb.set_trace()
     
@@ -416,29 +490,106 @@ def docinfos(content):
     etree = ET.fromstring(stree) # line 1 col 18 errore
     field_names = etree.findall("./docinfo/field/field_name")
     field_bodies = etree.findall("./docinfo/field/field_body/paragraph")
-    authors = etree.findall("./docinfo/author")
+    #authors = etree.findall("./docinfo/authors")
     
     if ( len(field_names) > 0 
        and len(field_bodies) > 0
        and len(field_names) == len(field_bodies) ):
         names = [n.text.lower() for n in field_names]
         bodies = [b.text for b in field_bodies]
-        # again: a SINGLE author
-        if authors:
-            names.append('author')
-            bodies.append(authors[0].text)
+        #pdb.set_trace()
+            
         for name, body in zip(names, bodies):
-            # BEWARE: created and modified are date&time fields
-            if name == 'created' or name == 'modified':
-                body = norm_dt(body)
-                # check https://stackoverflow.com/questions/466345/converting-string-into-datetime
-                body = datetime.strptime(body, '%Y-%m-%d %H:%M:%S')
-                # how use pytz? pytz.timezone(settings.TIME_ZONE)
-                #pdb.set_trace()
-                body = pytz.timezone(settings.TIME_ZONE).localize(body)
-            if type(body) == str:
+            if name in settings.RSTBLOG.get('FIELDS'):
                 body = body.replace('\n', ' ')
+                body = body.strip()
+                infos[name] = body
+    if 'authors' in settings.RSTBLOG.get('FIELDS'):
+        authors = None
+        authors = get_field(content, 'authors')
+        if authors:
+            infos['authors'] = authors
+    
+    return infos
+
+    
+def docinfos(content):
+    '''get docinfo fields from content
+    
+    params:
+        - content    str, reST document
+    
+    return: a dict with field names as keys and field bodies as values 
+    
+    note:
+        - about field translation_of, its value may be:
+            - the translated article, if found
+            - None, if translated article is not found
+            - in case value=='', dictionary voice is deleted'''
+            
+    #pdb.set_trace()
+    
+    infos = rough_docinfos(content)
+
+    # elaborate category, authors, created, modified
+    for name, body in infos.items():
+        # elaborate created, modified
+        if name in settings.RSTBLOG.get('DT_FIELDS'):
+            body = norm_dt(body)
+            # check https://stackoverflow.com/questions/466345/converting-string-into-datetime
+            body = datetime.strptime(body, '%Y-%m-%d %H:%M:%S')
+            # how use pytz? pytz.timezone(settings.TIME_ZONE)
+            #pdb.set_trace()
+            body = pytz.timezone(settings.TIME_ZONE).localize(body)
             infos[name] = body
+        # preelaborate authors
+        if name in settings.RSTBLOG.get('LIST_FIELDS'):
+            #pdb.set_trace()
+            body = body.split(",")
+            infos[name] = body
+        if name == 'authors':
+            authlist = []
+            for sauthor in body:
+                author = None
+                try:
+                    author = Author.objects.get(name=sauthor)
+                except:
+                    continue
+                if author:
+                    authlist.append(author)
+            infos[name] = authlist
+        # check category
+        if name == 'category':
+            category = None
+            try:
+                category = Category.objects.get(name=body)
+            except:
+                category = Category.objects.get(name='uncategorized')
+            if category:
+                infos[name] = category
+            else:
+                del info[name]
+        if name == 'translation_of':
+            if body != '':
+                translated = Article.objects.filter(title=body)
+                if translated.exists():
+                    infos[name] = translated[0]
+                else:
+                    infos[name] = None
+            else:
+                del infos[name]
+        
+        ## BEWARE: created and modified are date&time fields
+        #if name == 'created' or name == 'modified':
+        #    body = norm_dt(body)
+        #    # check https://stackoverflow.com/questions/466345/converting-string-into-datetime
+        #    body = datetime.strptime(body, '%Y-%m-%d %H:%M:%S')
+        #    # how use pytz? pytz.timezone(settings.TIME_ZONE)
+        #    #pdb.set_trace()
+        #    body = pytz.timezone(settings.TIME_ZONE).localize(body)
+        #if type(body) == str:
+        #    body = body.replace('\n', ' ')
+        #infos[name] = body
     
     return infos
 

@@ -29,7 +29,9 @@ So, reiterating the concept, we have this schema:
 
 Hereafter, as example, we report first lines of an
 _`article about Marco Tullius Cicero`, whose content is extracted from 
-wikipedia. It's written using reST::
+wikipedia. It's written using reST:
+
+.. code-block:: none
 
   :markup: restructuredtext
   :language: en
@@ -61,7 +63,7 @@ working area.
 As example, you can use a progressive number and a very short title note.
 
 But whatever rule you'll adopt, it will be right: ``rstblog`` is filename
-agnostic. Just a caution: it would be better if file extension was related
+agnostic. Just a caution: it would be better if file extension is related
 to the format used; i.e.: ``.md`` for *markdown* text, ``.rst`` for *reST* text
 and ``.html`` for *html* text.
 
@@ -218,7 +220,9 @@ you write the title of the *original* (translated) article.
 Accepted values. A title of an article present in the blog database.
 
 Example. If you write a translation of `article about Marco Tullius Cicero`_,
-it could be as follow::
+it could be as follow:
+
+.. code-block:: none
 
   :markup: restructuredtext
   :language: it
@@ -321,10 +325,10 @@ possible ``rstblog`` could upload even these files with the article.
 
 A very last note. When you would publish your work, you need to call:
 
-  ``https://my.blog.org/posts/load-article``
+  ``https://my.blog.org/blog/load-article``
   
 ``rstblog`` will ask you for your username and password. When you'll
-send them, it will ask for the article filename to load. Here you can
+give them to it, it will ask for the article filename to load. Here you can
 browse to the article file [#]_ and submit it, loading the request file.
   
 That's all folk about author manual. 

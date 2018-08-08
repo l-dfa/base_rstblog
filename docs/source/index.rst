@@ -110,9 +110,9 @@ If this long introduction did not make you escape, and you are still
 interested to know better how use ``rstblog``, I can propose you
 these chapters:
 
-* article :ref:`author manual`;
-* an empty site :ref:`manager manual`;
-* an empty :ref:`programmer manual`.
+* an article :ref:`author manual`;
+* an **empty** site :ref:`manager manual`;
+* an **empty** :ref:`programmer manual`.
 
 
 Indices and tables
