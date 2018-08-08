@@ -20,6 +20,13 @@ pre.code{
     margin-bottom:0.5rem;
     font-size: x-small;
 }
+
 .psummary{
     font-size: small;
+}
+
+.photo{
+    height: auto;
+    width: 80%;
+    object-fit: contain;
 }
