@@ -5,7 +5,7 @@ programmer manual
 =================
 
 .. contents:: programmer manual table of contents
-   :depth: 
+   :depth: 2
    
 
 

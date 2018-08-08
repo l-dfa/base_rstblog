@@ -40,7 +40,7 @@ wikipedia. It's written using reST:
   :modified: 2018-08-05 10:00:00
   :slug: speaking-about-cicero
   :summary:  The Marcus Cicero's profile: informations and life.
-  :author:   Wikipedia
+  :authors:   Wikipedia
   :category: latin literature history
   
   .. hic sunt leones
@@ -182,17 +182,19 @@ Example of multiple lines summary:
   :summary:  The Marcus Cicero's profile: informations and life. From
       wikipedia in english language.
 
-author
+authors
 ^^^^^^^
 
-Put here the name of author of the article (your name, I suppose :-).
+Put here the name(s) of author(s) of the article (your name, I suppose :-).
+In case of multiple authors, keep them in one line and separate them using a 
+comma (,).
 
 Accepted values. Author name must be present in blog database. It is 
 responsability of site manager to insert the names of accepted authors.
 
 Example:
 
-  :author:   Lawrence of Arabia
+  :authors:   Lawrence of Arabia
   
 category
 ^^^^^^^^
@@ -231,7 +233,7 @@ it could be as follow:
   :modified: 2018-08-05 10:00:00
   :slug: parlando-di-cicerone
   :summary:  Il profilo di Marco Tullio Cicerone: notizie e vita.
-  :author:   Wikipedia
+  :authors:   Wikipedia
   :category: latin literature history
   :translation_of: Speaking about Cicero
   
@@ -281,7 +283,7 @@ using reST::
 
   `wikipedia <https://en.wikipedia.org/wiki/Main_Page>`_
 
-It shows word ``wikipedia`` and it jumps to its main page if you are clicking
+It shows word ``wikipedia`` and it jumps to its main page if you click
 on the word.
 
 Then, what about hyperlink to other article in the site? In this case, 
@@ -346,4 +348,4 @@ Thank you to read it. We hope you enjoy it.
    
 .. [#] Note the use of the full name of the sintax type.
 
-..[#] Or directly type it, if you remember its full path and name.
+.. [#] Or directly type it, if you remember its full path and name.
