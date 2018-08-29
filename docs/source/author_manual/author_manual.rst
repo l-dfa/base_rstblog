@@ -86,7 +86,7 @@ A single field has structure:
 
   ``:``\ **fieldname**\ ``:`` *fieldvalue*
   
-``rstblog`` decides **fieldname**\ (s). So you must use the right fieldame
+``rstblog`` decides **fieldname**\ (s). So you must use the right fieldname
 without typos. Instead what to put in *fieldvalue* is up to you.
 
 Let's see the single fields meaning.
@@ -154,7 +154,7 @@ slug
 ^^^^^^
 
 Slug is the last piece of information used in the URL to reach your article.
-usually it reflects the article title to help the reader (and the web
+Usually it reflects the article title to help the reader (and the web
 crawler programs) to remember the article title.
 
 Acceptable values. As titles, even slugs must be unique in the blog. 
@@ -163,7 +163,7 @@ smooth, it's usual to use only lowercase regular letters, with puntuation marks
 and spaces substitued by dashes.
 
 Example. If your article would be reached by this url:
-``https://my.blog.org/blog/speaking-about-cicero``, you'll use::
+``https://my.blog.org/blog/show/speaking-about-cicero``, you'll use::
 
   :slug: speaking-about-cicero
   
@@ -199,7 +199,7 @@ Example:
 category
 ^^^^^^^^
 
-this is the master of categorizations. It catalogs our article assigning
+This is the master of categorizations. It catalogs our article assigning
 it to a main type.
 
 Accepted values. Again, it depends on the configuration of your blog.
@@ -287,12 +287,12 @@ It shows word ``wikipedia`` and it jumps to its main page if you click
 on the word.
 
 Then, what about hyperlink to other article in the site? In this case, 
-use the (relative) article URL. Remember: it uses ``blog/`` as prefix, 
+use the (relative) article URL. Remember: it uses ``/blog/show`` as prefix, 
 and slug as article identifier. So to hyperlink to your article 
 *Speaking about Cicero* you can use (for example)::
 
   ...
-  you can read our wonderful `article about Cicero </blog/speaking-about-cicero>`_
+  you can read our wonderful `article about Cicero </blog/show/speaking-about-cicero>`_
   ...
   
 Note that it isn't necessary to report the site domain (``my.blog.org``), and
@@ -337,7 +337,7 @@ That's all folk about author manual.
 Thank you to read it. We hope you enjoy it.
 
 
-
+--------------------------
 
 .. [#] A point to rember. If you wish, this signal could be changed
    by the *site manager*. And an anecdote. People say that this phrase was used in
