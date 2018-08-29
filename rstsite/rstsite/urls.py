@@ -26,17 +26,20 @@ from django.urls    import include
 from django.urls    import path
 
 from . import views
+from .sitemap import IndexSitemap
 from .sitemap import PagesSitemap
 from .sitemap import MediaSitemap
 from rstblog.models import Article
 
 articles_dict = {
-    'queryset': Article.objects.filter(translation_of__isnull=True),
+    #'queryset': Article.objects.filter(translation_of__isnull=True),
+    'queryset': Article.objects.all().order_by('-created'),
     'date_field': 'modified',
 }
 
 sitemaps= {
     'blog':  GenericSitemap(articles_dict, protocol='https', priority=0.5),
+    'indexes': IndexSitemap(['rstblog:index','rstblog:show_stats',]),
     'pages': PagesSitemap(['author.rst',]),
     'media': MediaSitemap(['pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf',]),
 }

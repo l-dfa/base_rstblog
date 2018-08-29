@@ -224,6 +224,9 @@ class Article(models.Model):
         super().save(*args, **kwargs)    
         
         
+    class Meta:
+        ordering = ['-created']
+        
 from django import forms
 from django.contrib import admin
 
