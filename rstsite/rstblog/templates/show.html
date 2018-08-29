@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% load staticfiles %}
+{% load fullurl %}
 
 {% if infos.title %}
     {% block title %}
@@ -12,9 +13,22 @@
 {% block meta %}
     {% if infos %}
         {% for key, value in infos.items %}
-             <meta name="{{ key }}" content="{{ value }}">
+             {% if key == 'language' %}
+                 <link rel="alternate" hreflang="{{ value }}" href="{{ request.build_absolute_uri }}" />
+             {% endif %}
+             {% if key == 'authors' %}
+                 <meta name="{{ key }}" content="{% for author in value %}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+             {% else %}
+                 <meta name="{{ key }}" content="{{ value }}">
+             {% endif %}
         {% endfor %}
     {% endif %}
+    {% if translations %}
+        {% for language, slug, lang in translations %}
+            <link rel="alternate" hreflang="{{ lang }}" href="{% fullurl 'rstblog:show' slug %}" />
+        {% endfor %}
+    {% endif %}
+
 {% endblock %}
 
 
@@ -40,7 +54,7 @@
                 {% endif %}
                 {% if translations %}
                     <span style="border: 1px solid red; border-radius: 2px;"> <b>Translation{{ translations|length|pluralize }}</b>: &nbsp; 
-                    {% for language, slug in translations %}
+                    {% for language, slug, lang in translations %}
                         <a href="{% url 'rstblog:show' slug %}">{{ language }}</a>
                         {% if not forloop.last%} &nbsp; {% endif %}
                     {% endfor %}

@@ -11,6 +11,10 @@ Index about {% if not category %}
             {% endif %}
 {% endblock %}
 
+{% block meta %}
+    <link rel="alternate" hreflang="x-default" href="{{ request.build_absolute_uri }}" />
+{% endblock %}
+
 {% block stylesheet %}
 {% endblock %}
 

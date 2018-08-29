@@ -341,7 +341,7 @@ def show(request, slug=''):
     
     # preaparing translations as [(language, slug), (language, slug), ...]
     trans = article.get_translations()
-    translations = [(LANGUAGES.get(t.language), t.slug, ) for t in trans]
+    translations = [(LANGUAGES.get(t.language), t.slug, t.language) for t in trans]
 
     # preparing article content as html
     try:
