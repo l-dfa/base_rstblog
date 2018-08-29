@@ -162,6 +162,7 @@ class Article(models.Model):
         default='', )
     slug = models.SlugField(
         'slug',
+        max_length=MEDIUM_LEN,
         null=False,
         blank=False,
         unique=True,
