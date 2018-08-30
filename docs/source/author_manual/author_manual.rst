@@ -7,6 +7,9 @@ author manual
 .. contents:: author manual table of contents
    :depth: 3
    
+Article organization
+------------------------
+
 Let's speak how organize an article that we'll publish using ``rstblog``.
 
 It is written in a file with two parts. The first part is about fields
@@ -56,7 +59,11 @@ wikipedia. It's written using reST:
 
   ...
 
-A last general information about article file. How to name it? Our advice
+  
+Article filename
+------------------
+
+Some speech about about article file. How to name it? Our advice
 is: create a rule and follow it. So you'll have a clearer
 working area.
 
@@ -67,10 +74,20 @@ agnostic. Just a caution: it would be better if file extension is related
 to the format used; i.e.: ``.md`` for *markdown* text, ``.rst`` for *reST* text
 and ``.html`` for *html* text.
 
+Two **warnings about filenames**:
+
+* 1st: you cannot use the same filename to write 
+  two different articles; this is obvious: on your PC, if you try to save a new
+  article using a used filename, you'll scratch the old article;
+* 2nd: you cannot change filename to an article already uploaded; this is
+  less obvious, but trust me: it is true; if you need to change filename
+  to an old article, you must tell it to the site administrator: he knows
+  how to do it.
+
 Now we'll speak in more detail about fields and content areas.
 
-Fields
------------
+Article fields (aka: attributes)
+----------------------------------
 
 As we saw, fields categorize our article. So they are vital.
 
