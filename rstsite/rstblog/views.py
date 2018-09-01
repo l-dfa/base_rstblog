@@ -316,6 +316,7 @@ def load_article(request):
     if request.method == 'POST':
         if request.FILES['article']:
             try:
+                #pdb.set_trace()
                 dst = upload_file(request, item_type='article', dirdst = Path(ARTICLES_DIR))
                 article = cOu_article_record(dst, must_be_original='ignore')
                 msg = 'article {} loaded'.format( dst.name, )
@@ -475,8 +476,8 @@ def rough_docinfos(content):
     #pdb.set_trace()
     
     infos = dict()
-    field_names = []
-    field_bodies = []
+    #field_names = []
+    #field_bodies = []
     
     tree = publish_doctree(content)
     stree = str(tree)
@@ -488,27 +489,46 @@ def rough_docinfos(content):
     stree = stree.replace('"]', '&quot;]')
 
     etree = ET.fromstring(stree) # line 1 col 18 errore
-    field_names = etree.findall("./docinfo/field/field_name")
-    field_bodies = etree.findall("./docinfo/field/field_body/paragraph")
-    #authors = etree.findall("./docinfo/authors")
     
-    if ( len(field_names) > 0 
-       and len(field_bodies) > 0
-       and len(field_names) == len(field_bodies) ):
-        names = [n.text.lower() for n in field_names]
-        bodies = [b.text for b in field_bodies]
-        #pdb.set_trace()
-            
-        for name, body in zip(names, bodies):
-            if name in settings.RSTBLOG.get('FIELDS'):
+    #fn = f"./docinfo/field[@classes='markup']/field_name"
+    #n = etree.find(fn)
+    for fname in settings.RSTBLOG.get('FIELDS'):
+        if fname == 'authors':
+            if 'authors' in settings.RSTBLOG.get('FIELDS'):
+                authors = None
+                authors = get_field(content, 'authors')
+                if authors:
+                    infos['authors'] = authors
+        else:
+            try:
+                sbody = f"./docinfo/field[@classes='{ fname }']/field_body/paragraph"
+                body = etree.find(sbody).text
                 body = body.replace('\n', ' ')
                 body = body.strip()
-                infos[name] = body
-    if 'authors' in settings.RSTBLOG.get('FIELDS'):
-        authors = None
-        authors = get_field(content, 'authors')
-        if authors:
-            infos['authors'] = authors
+                infos[fname] = body[:]
+            except:
+                pass
+            
+    #field_names = etree.findall("./docinfo/field/field_name")
+    #field_bodies = etree.findall("./docinfo/field/field_body/paragraph")
+    ##authors = etree.findall("./docinfo/authors")
+    #if ( len(field_names) > 0 
+    #   and len(field_bodies) > 0
+    #   and len(field_names) == len(field_bodies) ):
+    #    names = [n.text.lower() for n in field_names]
+    #    bodies = [b.text for b in field_bodies]
+    #    #pdb.set_trace()
+    #        
+    #    for name, body in zip(names, bodies):
+    #        if name in settings.RSTBLOG.get('FIELDS'):
+    #            body = body.replace('\n', ' ')
+    #            body = body.strip()
+    #            infos[name] = body
+    #if 'authors' in settings.RSTBLOG.get('FIELDS'):
+    #    authors = None
+    #    authors = get_field(content, 'authors')
+    #    if authors:
+    #        infos['authors'] = authors
     
     return infos
 
