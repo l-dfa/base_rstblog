@@ -3,23 +3,39 @@
 {% load staticfiles %}
 {% load fullurl %}
 
-{% if infos.title %}
-    {% block title %}
-        {{ infos.title }}
-    {% endblock %}
+{% if infos.title %} {% block title %} {{ infos.title }} {% endblock %}
 {% endif %}
 
 
 {% block meta %}
+    <meta name="generator" content="rstsite">
+    {% if infos %}
+        {% for key, value in infos.items %}
+             {% if key == 'title' %}
+             {% elif key == 'slug' %}
+             {% elif key == 'markup' %}
+             {% elif key == 'language' %}
+                 <meta name="language" content="{{ value }}">
+             {% elif key == 'authors' %}
+                 <meta name="author" content="{% for author in value %}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+             {% else %}
+                 <meta name="{{ key }}" content="{{ value }}">
+             {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% if translations %} {% endif %}
+
+{% endblock %}
+
+
+{% block stylesheet %}
+{% endblock %}
+
+{% block link %}
     {% if infos %}
         {% for key, value in infos.items %}
              {% if key == 'language' %}
                  <link rel="alternate" hreflang="{{ value }}" href="{{ request.build_absolute_uri }}" />
-             {% endif %}
-             {% if key == 'authors' %}
-                 <meta name="{{ key }}" content="{% for author in value %}{{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}">
-             {% else %}
-                 <meta name="{{ key }}" content="{{ value }}">
              {% endif %}
         {% endfor %}
     {% endif %}
@@ -32,8 +48,7 @@
 {% endblock %}
 
 
-{% block stylesheet %}
-{% endblock %}
+
 
 {% block content %}
     <!--<div style="border: 2px solid green; padding:0px 5px;">-->

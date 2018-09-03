@@ -4,18 +4,18 @@
 {% load rstblog_extras %}
 
 {% block title %}
-Index about {% if not category %} 
-                all categories
-            {% else %}
-                {{category}} category
-            {% endif %}
+Index about {% if not category %} all categories {% else %} {{category}} category {% endif %}
 {% endblock %}
 
 {% block meta %}
-    <link rel="alternate" hreflang="x-default" href="{{ request.build_absolute_uri }}" />
+    <meta name="generator" content="rstsblog">
 {% endblock %}
 
 {% block stylesheet %}
+{% endblock %}
+
+{% block link %}
+    <link rel="alternate" hreflang="x-default" href="{{ request.build_absolute_uri }}" />
 {% endblock %}
 
 {% block content %}

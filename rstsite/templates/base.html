@@ -6,7 +6,11 @@
   <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      {% block meta %} {% endblock %}
+      <meta name="abstract" content="{{ ABSTRACT }}">
+      {% block meta %}
+          <meta name="generator" content="rstsite">
+      {% endblock %}
+      
       <title> {% block title %} Title {% endblock %} </title>
       
       <!-- Core CSS - Include with every page -->
@@ -23,7 +27,11 @@
       -->
       {% block stylesheet %}
       {% endblock %}
+      
       <link rel="icon" type="image/ico" href="{% static 'images/favicon.ico' %}" />
+      {% block link %}
+      {% endblock %}
+      
   </head>
   <body>
     <header>
