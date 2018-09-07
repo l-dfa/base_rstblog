@@ -17,6 +17,7 @@ from django.shortcuts import render
 from rstblog.views import get_file_content
 from rstblog.views import rstcontent2html 
 from rstblog.views import upload_file
+from rstblog.views import cOu_article_record
 
 try:
     PAGES_DIR = Path(settings.RSTSITE['PAGES_DIR'])
@@ -25,15 +26,22 @@ except:
 
 @login_required(login_url="/login/")
 def load_page(request):
-    '''load a reST file '''
+    '''load a reST|markup|html file '''
     
     # load file to MEDIA_ROOT and move it to PAGES_DIR
-    # then nothing else to do
+    # then get fields from file content (docinfo section)
+    # and crete/update article record in DB
     if request.method == 'POST':
         if request.FILES['page']:
-            dst = upload_file(request, item_type='page', dirdst=Path(PAGES_DIR))
-            msg = 'page {} loaded'.format( dst.name, )
-            messages.add_message(request, messages.INFO, msg)
+            try:
+                dst = upload_file(request, item_type='page', dirdst=Path(PAGES_DIR))
+                #pdb.set_trace()
+                page = cOu_article_record(dst, must_be_original='ignore')
+                msg = 'page {} loaded'.format( dst.name, )
+                messages.add_message(request, messages.INFO, msg)
+            except Exception as ex:
+                msg = 'error "{}" while trying to load page. action NOT completed'.format(ex)
+                messages.add_message(request, messages.ERROR, msg)
         else:
             msg = 'file missing, nothing to upload'
             messages.add_message(request, messages.ERROR, msg)

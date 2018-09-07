@@ -43,6 +43,7 @@ sitemaps= {
     'pages': PagesSitemap(['author.rst',]),
     'media': MediaSitemap(['pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf',]),
 }
+
 urlpatterns = [
     path('blog/', include('rstblog.urls', namespace='rstblog')),
     path('load-page', views.load_page, name='load_page'),

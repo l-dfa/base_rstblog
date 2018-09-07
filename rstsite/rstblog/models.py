@@ -22,6 +22,7 @@ from concurrency.fields import IntegerVersionField
 
 from .const import ARTICLES_DIR
 from .const import LANGUAGES
+from .const import TYPES
     
 SHORT_LEN  = 50
 MEDIUM_LEN = 250
@@ -94,19 +95,16 @@ class Article(models.Model):
         - created
         - file
         - language
+        - markup
         - modified
-        - slug 
         - summary
+        - slug 
+        - atype
+        - hit
         - authors         m2m 
         - category        fKey
         - translation_of  fKey
         '''
-    #ENGLISH  = 'en'
-    #ITALIAN  = 'it'
-    #LANGUAGE = (
-    #    (ENGLISH, 'english'),
-    #    (ITALIAN, 'italian'),
-    #)
     HTML  = 'html'
     MARKDOWN  = 'markdown'
     reST  = 'restructuredtext'
@@ -128,7 +126,6 @@ class Article(models.Model):
         default=None)
     file = models.CharField(
         'file',
-        #upload_to=ARTICLES_DIR,
         max_length=MEDIUM_LEN,
         null=False,
         blank=False,
@@ -167,12 +164,19 @@ class Article(models.Model):
         blank=False,
         unique=True,
         default=None, )
+    atype = models.CharField(
+        'type',
+        max_length = SHORT_LEN,
+        null=False,
+        blank = False,
+        choices=list(TYPES.items()),
+        default=list(TYPES.keys())[0], )  # BEWARE.from py 3.6+ dict preserve keys order by insertion
     hit = models.IntegerField(
         'hit',
         null=False,
         blank=False,
         unique=False,
-        default=1, )
+        default=0, )
     record_created  = models.DateTimeField(auto_now_add=True)
     record_modified = models.DateTimeField(auto_now=True)
     version = IntegerVersionField()     # manage optimistic lock

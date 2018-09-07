@@ -30,18 +30,23 @@ from .models import Author
 from .models import Category
 
 from .const import ARTICLES_DIR
+from .const import PAGES_DIR
 from .const import LANGUAGES
 from .const import START_CONTENT_SIGNAL
 from .const import SUFFIX
+from .const import TYPES
 
 # memo
 #    load_article(request) #125
 #    index(request)        #176
 #    show(request, slug)   #161
 
-def get_stats():
-    ''' statistics about articles:
+def get_stats(atype):
+    ''' statistics about indicated atype:
     
+    parameters: 
+        - atype            str, type of object to count (article|page)
+        
     return a dictionary with these keys and values:
         - n: int        number of original articles (not a trnslation)
         - nt: int       number of translations
@@ -50,12 +55,12 @@ def get_stats():
         - arg-cat1: {lng1: int, lng2: int, ...)     number of category1 articles {language1, language2, ...}
         - arg-cat2: (int, int)     number of category2 articles (original, translated,)
         - ... '''
-        
+    
     result = dict()
-    n = Article.objects.filter(translation_of__isnull=True).count()
-    nt = Article.objects.filter(translation_of__isnull=False).count()
-    langs = Article.objects.values_list('language', flat=True)
-    cats = Article.objects.values_list('category__name', flat=True)
+    n  = Article.objects.filter(translation_of__isnull=True, atype=atype).count()
+    nt = Article.objects.filter(translation_of__isnull=False, atype=atype).count()
+    langs = Article.objects.filter(atype=atype).values_list('language', flat=True)
+    cats = Article.objects.filter(atype=atype).values_list('category__name', flat=True)
     sl = set(langs)
     sc = set(cats)
     result['n'] = n
@@ -73,7 +78,7 @@ def get_stats():
 
 def show_stats(request):
     '''return statisitcs about articles in blog'''
-    stats = get_stats()
+    stats = get_stats(list(TYPES.keys())[0] )  # articles only
     data = { 'stats': stats,
              'page_id': 'rstblog:show_stats'    }
              
@@ -307,7 +312,7 @@ def cOu_article_record(pth, must_be_original='ignore'):
     
 @login_required(login_url="/login/")
 def load_article(request):
-    '''load a reST file and add/chg relative record '''
+    '''load a reST|markup|html file and add/chg relative record '''
     
     article = None
     # load file to MEDIA_ROOT and move it to ARTICLES_DIR
