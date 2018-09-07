@@ -1,11 +1,11 @@
 {% load i18n %}
 {% load staticfiles %}
 
-<!DOCTYPE html>
-<html>
+<!doctype  html>
+<html lang="en">
   <head>
       <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="abstract" content="{{ ABSTRACT }}">
       {% block meta %}
           <meta name="generator" content="rstsite">
@@ -14,17 +14,13 @@
       <title> {% block title %} Title {% endblock %} </title>
       
       <!-- Core CSS - Include with every page -->
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/simplex/bootstrap.min.css">
+          <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+          <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css">
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       <link rel="stylesheet" href="{% static 'css/base.css' %}">
       <link rel="stylesheet" href="{% static 'css/pygments.css' %}">
 
-      <!--
-      <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
-      <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
-      <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-      <link rel="stylesheet" href="{% static 'css/base.css' %}">
-      -->
       {% block stylesheet %}
       {% endblock %}
       
@@ -39,12 +35,6 @@
         <div class="container">
             <!--<div class="navbar row">-->
             {% include "navbar.html" %}
-            <!--
-            <div class="navbar">
-              <div class="navbar-collapse collapse" id="header-portal" style="">
-              </div>
-            </div>
-            -->
         </div>
     </header>
 
@@ -72,30 +62,31 @@
     <!--        FOOTER        -->
     <footer>
         <!--<div class="continer" style="border: 2px solid green;"> -->
-        <div class="container">
-            <hr>
-            <p style="font-size:x-small;font-style:italic;">Powered by
-                <a href="https://github.com/l-dfa/base_rstblog" target="_blank">rstblog</a>,
-                &nbsp;using:
-                <a href="https://www.python.org/" target="_blank">Python</a>,
-                <a href="https://www.djangoproject.com/" target="_blank">Django</a> and
-                <a href="https://pypi.org/project/docutils/#description" target="_blank">Docutils</a>
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                &copy;2012 - 2018, luciano de falco alfano.
-                &nbsp;&nbsp;
-                <span style="float:right;">
-                Under a <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0 license.</a>
-                </span>
+        <div class="container soiola" style="font-size:x-small;font-style:italic;">
+            <hr class="soiola">
+            {% if WSUBTITLE %}
+            <div> <p> {{ WSUBTITLE }} </p> </div>
+            {% endif %}
+            <div>
+                <p >Powered by
+                    <a href="https://github.com/l-dfa/base_rstblog" target="_blank">rstblog</a>,
+                    &nbsp;using:
+                    <a href="https://www.python.org/" target="_blank">Python</a>,
+                    <a href="https://www.djangoproject.com/" target="_blank">Django</a> and
+                    <a href="https://pypi.org/project/docutils/#description" target="_blank">Docutils</a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    &copy;2012 - 2018, luciano de falco alfano.
+                    &nbsp;&nbsp;
+                    <span style="float:right;">
+                    Under a <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0 license.</a>
+                    </span>
                 </p>
+            </div>
         </div>
     </footer>
     
     <!-- Core SCRIPTS - Include with every page -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>    
     {% block javascript %}
     {% endblock %}
-
   </body>
 </html>

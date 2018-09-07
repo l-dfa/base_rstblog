@@ -1,55 +1,45 @@
 {% load staticfiles %}
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding:0px 5px;">
-  <a class="navbar-brand" href="/" style="padding:0px 5px;">
-      <img src="{% static 'images/avatar.jpg' %}" alt="ldfa website" style="width:52px;height:52px;border:0;padding:0;">
-  </a>
-  <div> 
-      <div class="hidden-xs">
-          <h3 id="siteid" class="hidden-xs">luciano de falco alfano web site</h3>
-      </div>
-      <hr style="paddig:0;margin:0;">
-      <div>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-        
-          <!--<div class="collapse navbar-collapse" id="navbarColor03">-->
-          <div class="collapse navbar-collapse" id="navbar-main">
-            <ul class="nav navbar-nav mr-auto">
-            
-              <li class="dropdown">
-                <a class="dropdown-toggle nav-link" data-toggle="dropdown" href="#" id="themes" style="border:0;padding:0px 5px;">Author <span class="caret"></span></a>
-                <ul class="dropdown-menu" aria-labelledby="themes">
-                  <li class="nav-item {%if page_id == 'show author.rst' %}active{% endif %}">
-                    <a class="nav-link" href="{% url 'show' 'author.rst' %}" style="border:0;padding:2px;">Author<span class="sr-only">(current)</span></a>
-                  </li>
-                  <li class="divider"></li>
-                  <li><a class="nav-link" href="/media/pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf" style="border:0;padding:2px;">Curriculum Vitae</a></li>
-                  <!--<li><a class="nav-link" href="#" style="border:0;padding:2px;">Formazione</a></li>-->
-                </ul>
-              </li>
-
-            
-              <li class="nav-item {%if page_id == 'rstblog:show_stats' %}active{% endif %}">
-                <a class="nav-link" href="{% url 'rstblog:show_stats' %}" style="border:0;padding:0px 5px;">Statistics</a>
-              </li>
-              <!--
-              <li class="nav-item">
-                <a class="nav-link" href="#">Pricing</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">About</a>
-              </li>
-            -->
-            </ul>
-            <!--
-            <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" placeholder="Search" type="text">
-              <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-            </form>
-            -->
-          </div>
-      </div>
+<div class="rsts-header">
+  <div class="rsts-brand">
+    <a class="navbar-brand soiola" href="/">
+        <img src="{% static 'images/avatar.jpg' %}" alt="ldfa website" style="width:52px;height:52px;border:0;padding:0;">
+    </a>
   </div>
-</nav>
+  <div class="soiola" style="float:left;">
+    <div class="container-fluid hidden-xs soiola">
+      <h4 class="soiola" style="text-align:center;color:DarkSlateBlue;">{{ WTITLE }}
+      </h4>
+    </div>
+    <nav class="navbar navbar-default soiola">
+      <div class="container-fluid">
+        <div class="navbar-header" >
+          <button type="button" class="navbar-toggle" style="float:right;" data-toggle="collapse" data-target="#ldfaNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <!-- <a class="navbar-brand" href="#" style="margin:0px;padding:0px 0px;"></a> -->
+        </div>
+        <div class="collapse navbar-collapse soiola" id="ldfaNavbar">
+          <ul class="nav navbar-nav soiola">
+            <li class="dropdown soiola">
+              <a class="dropdown-toggle soiola nitem-size" data-toggle="dropdown" href="#">Author<span class="caret"></span></a>
+              <ul class="dropdown-menu soiola">
+                  <li class="nav-item {%if page_id == 'show author.rst' %}active{% endif %} soiola">
+                    <a class="nav-link soiola nitem-size" href="{% url 'show' 'author.rst' %}" style="border:0;padding:2px;">Author<span class="sr-only">(current)</span></a>
+                  </li>
+                  <!-- <li class="divider"></li> -->
+                  <li><a class="nav-link soiola nitem-size" href="/media/pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf" style="border:0;padding:2px;">Curriculum Vitae</a></li>
+              </ul>
+            </li>
+              <li class="nav-item {%if page_id == 'rstblog:show_stats' %}active{% endif %} soiola">
+                <a class="nav-link soiola nitem-size" href="{% url 'rstblog:show_stats' %}" style="border:0;padding:0px 5px;">Statistics</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+

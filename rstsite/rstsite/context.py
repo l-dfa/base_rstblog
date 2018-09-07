@@ -5,6 +5,10 @@ from django.conf      import settings
 
 def siteconf(request):
     '''site configuration params availabe to templates'''
-    
-    return { 'ABSTRACT': settings.RSTSITE.get('ABSTRACT', ''), }
+    cont = { 
+        'ABSTRACT': settings.RSTSITE.get('ABSTRACT', ''),
+        'WTITLE':   settings.RSTSITE.get('WTITLE', ''),
+        'WSUBTITLE': settings.RSTSITE.get('WSUBTITLE', ''),
+        }
+    return cont
 
