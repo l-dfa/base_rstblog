@@ -40,7 +40,8 @@ articles_dict = {
 sitemaps= {
     'blog':  GenericSitemap(articles_dict, protocol='https', priority=0.5),
     'indexes': IndexSitemap(['rstblog:index','rstblog:show_stats',]),
-    'pages': PagesSitemap(['author.rst',]),
+    'pages': PagesSitemap(['author.rst',
+                           'formazione.rst',]),
     'media': MediaSitemap(['pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf',]),
 }
 

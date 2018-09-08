@@ -17,34 +17,37 @@
     <!--<div style="border: 2px solid green; padding:0px 5px;">-->
     <div>
     <h3 class="hindex">Blog statistics</h3>
-        <p>Number of <i>original</i> (not translations of) articles: {{ stats.n }}</p>
-        <p>Number of translations of original articles: {{ stats.nt }}</p>
-        <p>Number of used languages: {{ stats.sl|length }}&nbsp;
-             ( {% for l in stats.sl %}
-                 {{ l }} {% if not forloop.last %}, &nbsp;{% endif %}
-               {% endfor %}
-             )
-        </p>
-        <p>Number of used categories: {{ stats.sc|length }}&nbsp;
-             ( {% for c in stats.sc %}
-                 {{ c }} {% if not forloop.last %}, &nbsp;{% endif %}
-               {% endfor %}
-             )
-        </p>
-        <p>Number of articles over category:</p>
-        <ul>
-        {% for k, v in stats.items %}
-            {% if k in stats.sc %}
-                <li><a href="{% url 'rstblog:index_category' k %}">{{ k }}</a>:&nbsp;&nbsp;(&nbsp;
-                    {% for lk, lv in v.items %}
-                        {{ lk }}: {{ lv }}  {% if not forloop.last %}, &nbsp;{% endif %}
-                    {% endfor %}
-                    )
-                </li>
-            {% endif %}
-            {% comment %}
-            {% endcomment %}
+        {% for key, stats in all_stats.items %}
+            <h4><i>{{ key }}</i> section</h4>
+            <p>Number of <i>original</i> (not translations of) {{key}}: {{ stats.n }}</p>
+            <p>Number of translations of original {{key}}: {{ stats.nt }}</p>
+            <p>Number of used languages: {{ stats.sl|length }}&nbsp;
+                 ( {% for l in stats.sl %}
+                     {{ l }} {% if not forloop.last %}, &nbsp;{% endif %}
+                   {% endfor %}
+                 )
+            </p>
+            <p>Number of used categories: {{ stats.sc|length }}&nbsp;
+                 ( {% for c in stats.sc %}
+                     {{ c }} {% if not forloop.last %}, &nbsp;{% endif %}
+                   {% endfor %}
+                 )
+            </p>
+            <p>Number of articles over category:</p>
+            <ul>
+            {% for k, v in stats.items %}
+                {% if k in stats.sc %}
+                    <li><a href="{% url 'rstblog:index_category' k key %}">{{ k }}</a>:&nbsp;&nbsp;(&nbsp;
+                        {% for lk, lv in v.items %}
+                            {{ lk }}: {{ lv }}  {% if not forloop.last %}, &nbsp;{% endif %}
+                        {% endfor %}
+                        )
+                    </li>
+                {% endif %}
+                {% comment %}
+                {% endcomment %}
+            {% endfor %}
+            </ul>
         {% endfor %}
-        </ul>
     </div>
 {% endblock %}

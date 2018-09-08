@@ -20,7 +20,7 @@ Index about {% if not category %} all categories {% else %} {{category}} categor
 
 {% block content %}
     <h3 class="hindex">Indexing {{ articles|length }}
-                       article{{ articles|length|pluralize }}
+                       {{ atype }}{{ articles|length|pluralize }}
                        about {% if not category %} 
                                  all categories
                              {% else %}

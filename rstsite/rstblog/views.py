@@ -41,6 +41,8 @@ from .const import TYPES
 #    index(request)        #176
 #    show(request, slug)   #161
 
+MASTER_TYPE = list(TYPES.keys())[0]
+
 def get_stats(atype):
     ''' statistics about indicated atype:
     
@@ -70,7 +72,7 @@ def get_stats(atype):
     for cat in sc:
         dcat = dict()
         for lng in sl:
-            lc = Article.objects.filter(category__name=cat, language=lng).count()
+            lc = Article.objects.filter(category__name=cat, language=lng, atype=atype).count()
             dcat[lng] = lc
         result[cat] = copy(dcat)
     #pdb.set_trace()
@@ -78,8 +80,11 @@ def get_stats(atype):
 
 def show_stats(request):
     '''return statisitcs about articles in blog'''
-    stats = get_stats(list(TYPES.keys())[0] )  # articles only
-    data = { 'stats': stats,
+    all_stats = dict()     # dict of dicts one every atype
+    for key in list(TYPES.keys()):
+        stats = get_stats(key)  # 
+        all_stats[key] = stats.copy()
+    data = { 'all_stats': all_stats,
              'page_id': 'rstblog:show_stats'    }
              
     return render( request, 'show_stats.html', data, )
@@ -391,21 +396,21 @@ def show(request, slug=''):
     return render( request, 'show.html', data, )
 
 
-def index(request, category=''):
+def index(request, category='', atype=MASTER_TYPE):
     ''' list articles '''
     
     articles = None
     ctg = None
     #pdb.set_trace()
     if category=='':
-        articles = Article.objects.filter(translation_of__isnull=True).order_by('-created')
+        articles = Article.objects.filter(translation_of__isnull=True, atype=atype).order_by('-created')
     else:
         try:
             ctg = Category.objects.get(name=category)
         except Exception as ex:
             msg = f'category {category} unknown'
             messages.add_message(request, messages.ERROR, msg)
-        articles = Article.objects.filter(translation_of__isnull=True, category=ctg.pk).order_by('-created')
+        articles = Article.objects.filter(translation_of__isnull=True, atype=atype, category=ctg.pk).order_by('-created')
             
     translations = dict()
     for article in articles:
@@ -415,7 +420,8 @@ def index(request, category=''):
     #pdb.set_trace()
     data = { 'articles':     articles,
              'translations': translations,
-             'category': category, }
+             'category': category,
+             'atype': atype, }
     
     return render( request, 'index.html', data )
 

@@ -12,7 +12,7 @@ app_name = 'rstblog'
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('index/<category>', views.index, name='index_category'),
+    path('index/<category>/<atype>', views.index, name='index_category'),
     path('load-article', views.load_article, name='load_article'),
     path('reset-article-table', views.reset_article_table, name='reset_article_table'),
     path('show/<slug>', views.show, name='show'),

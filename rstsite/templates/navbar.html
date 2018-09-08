@@ -27,13 +27,15 @@
               <a class="dropdown-toggle soiola nitem-size" data-toggle="dropdown" href="#">Author<span class="caret"></span></a>
               <ul class="dropdown-menu soiola">
                   <li class="nav-item {%if page_id == 'show author.rst' %}active{% endif %} soiola">
-                    <a class="nav-link soiola nitem-size" href="{% url 'show' 'author.rst' %}" style="border:0;padding:2px;">Author<span class="sr-only">(current)</span></a>
+                    <a class="nav-link soiola nitem-size" href="{% url 'show' 'autore.rst' %}" style="border:0;padding:2px;">Autore<span class="sr-only">(current)</span></a>
                   </li>
                   <!-- <li class="divider"></li> -->
                   <li class="nav-item {%if page_id == 'show formazione.rst' %}active{% endif %} soiola">
                     <a class="nav-link soiola nitem-size" href="{% url 'show' 'formazione.rst' %}" style="border:0;padding:2px;">Formazione<span class="sr-only">(current)</span></a>
                   </li>
-                  <li><a class="nav-link soiola nitem-size" href="/media/pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf" style="border:0;padding:2px;">Curriculum Vitae</a></li>
+                  <li>
+                    <a class="nav-link soiola nitem-size" href="/media/pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf" style="border:0;padding:2px;">Curriculum Vitae</a>
+                  </li>
               </ul>
             </li>
               <li class="nav-item {%if page_id == 'rstblog:show_stats' %}active{% endif %} soiola">
