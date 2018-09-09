@@ -19,7 +19,7 @@
     <h3 class="hindex">Blog statistics</h3>
         {% for key, stats in all_stats.items %}
             <h4><i>{{ key }}</i> section</h4>
-            <p>Number of <i>original</i> (not translations of) {{key}}: {{ stats.n }}</p>
+            <p>Number of <i>original</i> (not translations of) {{key}}s: {{ stats.n }}</p>
             <p>Number of translations of original {{key}}: {{ stats.nt }}</p>
             <p>Number of used languages: {{ stats.sl|length }}&nbsp;
                  ( {% for l in stats.sl %}
@@ -33,7 +33,7 @@
                    {% endfor %}
                  )
             </p>
-            <p>Number of articles over category:</p>
+            <p>Number of {{ key }}s over category:</p>
             <ul>
             {% for k, v in stats.items %}
                 {% if k in stats.sc %}

@@ -18,6 +18,7 @@ from django.conf      import settings
 from django.contrib   import messages
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
+from django.db.models import Exists
 from django.http      import Http404
 from django.http      import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -417,13 +418,16 @@ def index(request, category='', atype=MASTER_TYPE):
         trans = article.get_translations()
         if len(trans) > 0:
             translations[article.title] = [(LANGUAGES.get(t.language), t.slug, ) for t in trans]
+    
     #pdb.set_trace()
     data = { 'articles':     articles,
              'translations': translations,
              'category': category,
-             'atype': atype, }
+             'atype': atype,
+             'page_id': f'index {category} {atype}'}
     
     return render( request, 'index.html', data )
+
 
     
 def rstcontent2html(content):

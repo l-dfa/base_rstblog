@@ -23,24 +23,46 @@
         </div>
         <div class="collapse navbar-collapse soiola" id="ldfaNavbar">
           <ul class="nav navbar-nav soiola">
-            <li class="dropdown soiola">
+
+            <li class="dropdown soiola">        <!-- Articles list by Category (AbC) submenu -->
+              <a class="dropdown-toggle soiola nitem-size" data-toggle="dropdown" href="#">Articles by category<span class="caret"></span></a>
+              <ul class="dropdown-menu soiola">
+                  <li class="nav-item {%if page_id == 'index  article' %}active{% endif %} soiola">  <!-- AbC submenu / All categories -->
+                    <a class="nav-link soiola nitem-size" href="/" style="border:0;padding:2px;">all categories</a>
+                  </li>
+                  <li class="divider"><hr></li>
+                  {% for atype, at_categories in categories.items %}
+                    {% if atype == 'article' %}
+                      {% for category in at_categories %}
+                        {% with "index "|add:category|add:" "|add:atype as pid %}
+                          <li class="nav-item {%if page_id == pid %}active{% endif %} soiola">  <!-- LbC submenu / category -->
+                            <a class="nav-link soiola nitem-size" href="{% url 'rstblog:index_category' category atype %}" style="border:0;padding:2px;">{{category}}</a>
+                          </li>
+                        {% endwith %}
+                      {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+              </ul>
+            </li>
+          
+            <li class="dropdown soiola">        <!-- Author submenu -->
               <a class="dropdown-toggle soiola nitem-size" data-toggle="dropdown" href="#">Author<span class="caret"></span></a>
               <ul class="dropdown-menu soiola">
-                  <li class="nav-item {%if page_id == 'show author.rst' %}active{% endif %} soiola">
-                    <a class="nav-link soiola nitem-size" href="{% url 'show' 'autore.rst' %}" style="border:0;padding:2px;">Autore<span class="sr-only">(current)</span></a>
+                  <li class="nav-item {%if page_id == 'show author.rst' %}active{% endif %} soiola">  <!-- Author submenu / Autore -->
+                    <a class="nav-link soiola nitem-size" href="{% url 'show' 'autore.rst' %}" style="border:0;padding:2px;">Autore</a>
                   </li>
-                  <!-- <li class="divider"></li> -->
-                  <li class="nav-item {%if page_id == 'show formazione.rst' %}active{% endif %} soiola">
+                  <!-- <li class="divider"><hr></li> -->
+                  <li class="nav-item {%if page_id == 'show formazione.rst' %}active{% endif %} soiola">  <!-- Author submenu / Formazione -->
                     <a class="nav-link soiola nitem-size" href="{% url 'show' 'formazione.rst' %}" style="border:0;padding:2px;">Formazione<span class="sr-only">(current)</span></a>
                   </li>
-                  <li>
+                  <li>  <!-- Author submenu / Curriculum Vitae -->
                     <a class="nav-link soiola nitem-size" href="/media/pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf" style="border:0;padding:2px;">Curriculum Vitae</a>
                   </li>
               </ul>
             </li>
-              <li class="nav-item {%if page_id == 'rstblog:show_stats' %}active{% endif %} soiola">
-                <a class="nav-link soiola nitem-size" href="{% url 'rstblog:show_stats' %}" style="border:0;padding:0px 5px;">Statistics</a>
-              </li>
+            <li class="nav-item {%if page_id == 'rstblog:show_stats' %}active{% endif %} soiola">  <!-- Statistics -->
+              <a class="nav-link soiola nitem-size" href="{% url 'rstblog:show_stats' %}" style="border:0;padding:0px 5px;">Statistics</a>
+            </li>
           </ul>
         </div>
       </div>
