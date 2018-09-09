@@ -29,6 +29,7 @@ from . import views
 from .sitemap import IndexSitemap
 from .sitemap import PagesSitemap
 from .sitemap import MediaSitemap
+from .sitemap import PlainSitemap
 from rstblog.models import Article
 
 articles_dict = {
@@ -43,6 +44,9 @@ sitemaps= {
     'pages': PagesSitemap(['author.rst',
                            'formazione.rst',]),
     'media': MediaSitemap(['pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf',]),
+    'plain': PlainSitemap(['robots.txt',
+                           'sitemap.xml',]),
+    
 }
 
 urlpatterns = [
