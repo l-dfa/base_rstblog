@@ -123,13 +123,20 @@ class Article(models.Model):
     created = models.DateTimeField(
         null=True,
         blank=True,
-        default=None)
+        default=None, )
     file = models.CharField(
         'file',
         max_length=MEDIUM_LEN,
         null=False,
         blank=False,
-        unique=True,)
+        unique=True, )
+    image = models.CharField(
+        'image',
+        max_length=MEDIUM_LEN,
+        null=True,
+        blank=False,
+        unique=False,
+        default=None, )
     language = models.CharField(
         'language',
         max_length = 2,
@@ -243,10 +250,10 @@ from django.contrib import admin
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ('title', 'created', 'file', 
+        fields = ('title', 'created', 'file', 'image',
             'language', 'markup', 'modified',
             'summary',
-            'slug', 
+            'slug', 'atype', 'hit',
             'authors', 
             'category',
             'translation_of', )
