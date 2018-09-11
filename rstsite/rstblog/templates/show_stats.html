@@ -22,14 +22,14 @@
             <p>Number of <i>original</i> (not translations of) {{key}}s: {{ stats.n }}</p>
             <p>Number of translations of original {{key}}: {{ stats.nt }}</p>
             <p>Number of used languages: {{ stats.sl|length }}&nbsp;
-                 ( {% for l in stats.sl %}
-                     {{ l }} {% if not forloop.last %}, &nbsp;{% endif %}
+                 (&nbsp;{% for l in stats.sl %}
+                     {{ l }}{% if not forloop.last %}&comma;&nbsp;{% endif %}
                    {% endfor %}
-                 )
+                 &nbsp;)
             </p>
             <p>Number of used categories: {{ stats.sc|length }}&nbsp;
                  ( {% for c in stats.sc %}
-                     {{ c }} {% if not forloop.last %}, &nbsp;{% endif %}
+                     {{ c }}{% if not forloop.last %}&comma;&nbsp;{% endif %}
                    {% endfor %}
                  )
             </p>
@@ -39,9 +39,9 @@
                 {% if k in stats.sc %}
                     <li><a href="{% url 'rstblog:index_category' k key %}">{{ k }}</a>:&nbsp;&nbsp;(&nbsp;
                         {% for lk, lv in v.items %}
-                            {{ lk }}: {{ lv }}  {% if not forloop.last %}, &nbsp;{% endif %}
+                            {{ lk }}: {{ lv }}{% if not forloop.last %}&comma;&nbsp;{% endif %}
                         {% endfor %}
-                        )
+                        &nbsp;)
                     </li>
                 {% endif %}
                 {% comment %}

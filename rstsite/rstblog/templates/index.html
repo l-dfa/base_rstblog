@@ -19,7 +19,7 @@ Index about {% if not category %} all categories {% else %} {{category}} categor
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container" style="background-color:WhiteSmoke;">
         <h3 class="hindex">Indexing {{ articles|length }}
                            {{ atype }}{{ articles|length|pluralize }}
                            about {% if not category %} 
@@ -31,8 +31,41 @@ Index about {% if not category %} all categories {% else %} {{category}} categor
         
         {% for article in articles %}
         
-            <div style="clear:both;">
-                
+            <div style="margin:10px 0px;overflow:auto;background-color:White;box-shadow:1px 1px LightGrey;">
+                <div style="clear:both;">
+                    <h5 style="margin:1px; padding:2px">
+                        <a href="{% url 'rstblog:show' article.slug %}">{{ article.title }}</a>
+                    </h5>
+                    
+                    <p class="container-fluid hidden-xs pattributes" style="margin:1px; padding:2px">
+                        {% if article.hit %}
+                            <i>Read</i> {{ article.hit }} times
+                            {% if article.created %} ;&nbsp;&nbsp;&nbsp; {% endif %}
+                        {% endif %}
+                        {% if article.created %} 
+                            <i>Created</i> on {{ article.created|date:"d M Y" }}
+                            {% if article.modified %} ;&nbsp;&nbsp;&nbsp; {% endif %}
+                        {% endif %}
+                        {% if article.modified %}
+                            <i>Modified</i> on {{ article.modified|date:"d M Y" }}
+                        {% endif %}
+                        {% for key, value in translations.items %}
+                            {% if key == article.title %}
+                                ;&nbsp;&nbsp;&nbsp;
+                                <!-- <span style="border: 1px solid red; border-radius: 2px;"> <b>Translation{{ value|length|pluralize }}</b>: &nbsp; -->
+                                <span><b>Translation{{ value|length|pluralize }}</b>:&nbsp; 
+                                {% for language, slug in value %}
+                                    <a href="{% url 'rstblog:show' slug %}">{{ language }}</a>
+                                    {% if not forloop.last%}&comma;&nbsp;{% endif %}
+                                {% endfor %}
+                                </span>
+                            {% endif %}
+                        {% comment %}
+                        {% endcomment %}
+                        {% endfor %}
+                    </p>
+                </div>
+                <div>
                 {% if article.image != None %}
                     <div style="float:left;">
                         {% with "/media/images/"|add:article.image as img %}
@@ -41,42 +74,11 @@ Index about {% if not category %} all categories {% else %} {{category}} categor
                         {% endwith %}
                     </div>
                 {% endif %}
-                <div>
-                    <h5>
-                        <a href="{% url 'rstblog:show' article.slug %}">{{ article.title }}</a>
-                    </h5>
-                    
-                    <p class="pattributes">
-                        {% if article.hit %}
-                            <b>Read</b> {{ article.hit }} times
-                            {% if article.created %} ;&nbsp;&nbsp;&nbsp; {% endif %}
-                        {% endif %}
-                        {% if article.created %} 
-                            <b>Created</b> on {{ article.created|date:"d M Y" }}
-                            {% if article.modified %} ;&nbsp;&nbsp;&nbsp; {% endif %}
-                        {% endif %}
-                        {% if article.modified %}
-                            <b>Modified</b> on {{ article.modified|date:"d M Y" }}
-                        {% endif %}
-                        {% for key, value in translations.items %}
-                            {% if key == article.title %}
-                                ;&nbsp;&nbsp;&nbsp;
-                                <span style="border: 1px solid red; border-radius: 2px;"> <b>Translation{{ value|length|pluralize }}</b>: &nbsp; 
-                                {% for language, slug in value %}
-                                    <a href="{% url 'rstblog:show' slug %}">{{ language }}</a>
-                                    {% if not forloop.last%} &nbsp; {% endif %}
-                                {% endfor %}
-                                </span>
+                    <div>
+                            {% if article.summary %}
+                                <p class="psummary" style="padding:2px;">{{ article.summary }}</p>
                             {% endif %}
-                        {% comment %}
-                        {% endcomment %}
-                        {% endfor %}
-                    </p>
-                    <p class="psummary">
-                        {% if article.summary %}
-                            <!-- <span style="font-style: italic;">Summary:</span> --> {{ article.summary }}
-                        {% endif %}
-                    </p>
+                    </div>
                 </div>
             </div>
         {% empty %}

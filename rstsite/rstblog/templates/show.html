@@ -51,27 +51,27 @@
 
 
 {% block content %}
-    <!--<div style="border: 2px solid green; padding:0px 5px;">-->
+    <div style="margin: 5px; padding:5px;">
     {% if article or translations %}
         <div style="margin:5px;padding:5px;border: 1px solid black; border-radius: 2px;">
-            <p style="font-size: small;margin-bottom:0px;">
+            <p style="font-size: x-small;margin-bottom:0px;">
                 {% if article.author %}
-                    <b>By</b> {{ article.author.name }}
+                    <i>By</i> {{ article.author.name }}
                     {% if article.created %} ;&nbsp;&nbsp;&nbsp; {% endif %}
                 {% endif %}
                 {% if article.created %}
-                    <b>Created</b> on {{ article.created|date:"d M Y" }}
+                    <i>Created</i> on {{ article.created|date:"d M Y" }}
                     {% if article.modified %} ;&nbsp;&nbsp;&nbsp; {% endif %}
                 {% endif %}
                 {% if article.modified %}
-                    <b>Modified</b> on {{ article.modified|date:"d M Y" }}
+                    <i>Modified</i> on {{ article.modified|date:"d M Y" }}
                     {% if translations %} ;&nbsp;&nbsp;&nbsp; {% endif %}
                 {% endif %}
                 {% if translations %}
-                    <span style="border: 1px solid red; border-radius: 2px;"> <b>Translation{{ translations|length|pluralize }}</b>: &nbsp; 
+                    <span> <b>Translation{{ translations|length|pluralize }}</b>:&nbsp; 
                     {% for language, slug, lang in translations %}
                         <a href="{% url 'rstblog:show' slug %}">{{ language }}</a>
-                        {% if not forloop.last%} &nbsp; {% endif %}
+                        {% if not forloop.last%}&comma;&nbsp; {% endif %}
                     {% endfor %}
                     </span>
                     {% comment %}
@@ -81,7 +81,8 @@
         </div>
     {% endif %}
 
-    <div style="padding:20px;">
-    {{ content |safe }}
+        <div>
+            {{ content |safe }}
+        </div>
     </div>
 {% endblock %}
