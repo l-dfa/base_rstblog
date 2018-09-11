@@ -115,6 +115,18 @@ these chapters:
 * an **empty** :ref:`programmer manual`.
 
 
+References
+-----------------------
+
+This project is open source `hosted on GitHub <https://github.com/l-dfa/base_rstblog>`_.
+
+And here there is the `author's website <https://luciano.defalcoalfano.it>`_.
+Its contents are mainly written in italian language.
+
+This is the `launch article <https://luciano.defalcoalfano.it/blog/show/rstblog-project>`_
+about this project.
+
+
 Indices and tables
 ==================
 
