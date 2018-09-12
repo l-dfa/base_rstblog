@@ -36,6 +36,7 @@ from .const import LANGUAGES
 from .const import START_CONTENT_SIGNAL
 from .const import SUFFIX
 from .const import TYPES
+from .const import HOME_ITEMS
 
 # memo
 #    load_article(request) #125
@@ -397,14 +398,23 @@ def show(request, slug=''):
     return render( request, 'show.html', data, )
 
 
-def index(request, category='', atype=MASTER_TYPE):
+def index(request, category='', atype=''):
     ''' list articles '''
     
+    #pdb.set_trace()
     articles = None
     ctg = None
+    home = ''         # if home=='home' it is blog home flag
+    if atype == '':
+        home = 'home'
+        atype = MASTER_TYPE
     #pdb.set_trace()
     if category=='':
-        articles = Article.objects.filter(translation_of__isnull=True, atype=atype).order_by('-created')
+        if home:
+            # MODIFY THIS ONE FROM SETTINGS PARAM
+            articles = Article.objects.filter(translation_of__isnull=True, atype=atype).order_by('-created')[:HOME_ITEMS]
+        else:
+            articles = Article.objects.filter(translation_of__isnull=True, atype=atype).order_by('-created')
     else:
         try:
             ctg = Category.objects.get(name=category)
@@ -424,7 +434,8 @@ def index(request, category='', atype=MASTER_TYPE):
              'translations': translations,
              'category': category,
              'atype': atype,
-             'page_id': f'index {category} {atype}'}
+             'page_id': f'index {category} {atype}',
+             'home': home, }
     
     return render( request, 'index.html', data )
 

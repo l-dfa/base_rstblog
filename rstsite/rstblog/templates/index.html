@@ -21,7 +21,7 @@ Index about {% if not category %} all categories {% else %} {{category}} categor
 {% block content %}
     <div class="container" style="background-color:WhiteSmoke;">
         <h3 class="hindex">Indexing {{ articles|length }}
-                           {{ atype }}{{ articles|length|pluralize }}
+                           {% if home %}<i>newer</i>&nbsp;{% endif %}{{ atype }}{{ articles|length|pluralize }}
                            about {% if not category %} 
                                      all categories
                                  {% else %}
