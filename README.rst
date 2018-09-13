@@ -45,7 +45,7 @@ What are the reasons that led us to this design choice? The following:
 * the program is extremely light, it runs smoothly on servers with
   limited CPU capacity as with little RAM and HDU space (as long as accesses
   are contained, and we haven't this problem :-);
-* we do not renounce the flexibility and speed of research that a DB allows me;
+* we do not renounce the flexibility and speed of research that a DB allows;
 * if we have a few articles [1]_ the DB can be implemented with the support library
   of Python (``sqlite3``), without using big programs (in the sense
   that they commit a lot of resources) like MySQL_, PostgreSQL_, ...
