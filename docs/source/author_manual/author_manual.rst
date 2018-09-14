@@ -404,6 +404,7 @@ Usually ``rstblog`` regards an article as published by default, unless the artic
 author sets this filed to ``no`` [5]_. An **unpublished** article:
 
 * doesn't compare in indexes;
+* doesn't compare in sitemap.xml;
 * isn't shown, even if you request it using directly the correct slug in URL.
 
 But it's counted in statistics.
