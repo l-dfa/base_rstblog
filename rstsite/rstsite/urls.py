@@ -31,16 +31,29 @@ from .sitemap import PagesSitemap
 from .sitemap import MediaSitemap
 from .sitemap import PlainSitemap
 from rstblog.models import Article
+from rstblog.models import Category
+
+# this to create urls about search articles by categories
+#    to pass to IndexSitemap in sitemaps section
+categories = Category.objects.values_list('name', flat=True)
+search_by_category = []
+for category in categories:
+    search_by_category.append(['rstblog:index_category', category[:], 'article',])
+  
 
 articles_dict = {
     #'queryset': Article.objects.filter(translation_of__isnull=True),
-    'queryset': Article.objects.all().order_by('-created'),
+    'queryset': Article.objects.filter(published=True).order_by('-created'),
     'date_field': 'modified',
 }
 
 sitemaps= {
     'blog':  GenericSitemap(articles_dict, protocol='https', priority=0.5),
-    'indexes': IndexSitemap(['rstblog:index','rstblog:show_stats',]),
+    'indexes': IndexSitemap(['rstblog:index',
+                             'rstblog:show_stats',
+                             ['rstblog:index_all_categories', 'article',],
+                             *search_by_category,
+                             ]),
     'pages': PagesSitemap(['author.rst',
                            'formazione.rst',]),
     'media': MediaSitemap(['pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf',]),

@@ -19,7 +19,10 @@ class IndexSitemap(sitemaps.Sitemap):
 
     def location(self, obj):
         #pdb.set_trace()
-        return reverse(obj)
+        if type(obj) == type([]):
+            return reverse(obj[0], args=obj[1:])
+        else:
+            return reverse(obj)
         
         
 class PagesSitemap(sitemaps.Sitemap):
