@@ -100,6 +100,8 @@ class Article(models.Model):
         - summary
         - slug 
         - atype
+        - published
+        - home
         - hit
         - authors         m2m 
         - category        fKey
@@ -178,6 +180,16 @@ class Article(models.Model):
         blank = False,
         choices=list(TYPES.items()),
         default=list(TYPES.keys())[0], )  # BEWARE.from py 3.6+ dict preserve keys order by insertion
+    published = models.BooleanField(
+        'published',
+        null=False,
+        blank = False,
+        default=True, )
+    offer_home = models.BooleanField(
+        'offer article for home',
+        null=False,
+        blank = False,
+        default=True, )
     hit = models.IntegerField(
         'hit',
         null=False,
@@ -239,6 +251,7 @@ class Article(models.Model):
     class Meta:
         ordering = ['-created']
         
+                
 from django import forms
 from django.contrib import admin
 
@@ -253,7 +266,7 @@ class ArticleForm(forms.ModelForm):
         fields = ('title', 'created', 'file', 'image',
             'language', 'markup', 'modified',
             'summary',
-            'slug', 'atype', 'hit',
+            'slug', 'atype', 'published', 'offer_home', 'hit',
             'authors', 
             'category',
             'translation_of', )
