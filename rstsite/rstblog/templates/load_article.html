@@ -2,6 +2,11 @@
 {% load i18n %}
 {% load staticfiles %}
 
+{% block meta %}
+    <meta name="author" content="luciano de falco alfano">
+    <link rel="alternate" hreflang="x-default" href="{{ request.build_absolute_uri }}" />
+{% endblock %}
+
 
 {% block content %}
   <form method="post" enctype="multipart/form-data">
