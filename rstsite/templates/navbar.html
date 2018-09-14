@@ -28,7 +28,7 @@
               <a class="dropdown-toggle soiola nitem-size" data-toggle="dropdown" href="#">Articles by category<span class="caret"></span></a>
               <ul class="dropdown-menu soiola">
                   <li class="nav-item {%if page_id == 'index  article' %}active{% endif %} soiola">  <!-- AbC submenu / All categories -->
-                    <a class="nav-link soiola nitem-size" href="/" style="border:0;padding:2px;">all categories</a>
+                    <a class="nav-link soiola nitem-size" href="{% url 'rstblog:index_all_categories' 'article' %}" style="border:0;padding:2px;">all categories</a>
                   </li>
                   <li class="divider"><hr></li>
                   {% for atype, at_categories in categories.items %}

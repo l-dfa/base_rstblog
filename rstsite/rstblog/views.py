@@ -36,6 +36,7 @@ from .const import LANGUAGES
 from .const import START_CONTENT_SIGNAL
 from .const import SUFFIX
 from .const import TYPES
+from .const import HOME_ITEMS
 
 # memo
 #    load_article(request) #125
@@ -349,7 +350,7 @@ def load_article(request):
 def show(request, slug=''):
     '''shows a reStructuredText file as html'''
     #pdb.set_trace()
-    article = get_object_or_404(Article, slug=slug)
+    article = get_object_or_404(Article, published=True, slug=slug)
     
     # preaparing translations as [(language, slug), (language, slug), ...]
     trans = article.get_translations()
@@ -397,21 +398,30 @@ def show(request, slug=''):
     return render( request, 'show.html', data, )
 
 
-def index(request, category='', atype=MASTER_TYPE):
+def index(request, category='', atype=''):
     ''' list articles '''
     
+    #pdb.set_trace()
     articles = None
     ctg = None
+    home = ''         # if home=='home' it is blog home flag
+    if atype == '':
+        home = 'home'
+        atype = MASTER_TYPE
     #pdb.set_trace()
     if category=='':
-        articles = Article.objects.filter(translation_of__isnull=True, atype=atype).order_by('-created')
+        if home:
+            # MODIFY THIS ONE FROM SETTINGS PARAM
+            articles = Article.objects.filter(translation_of__isnull=True, published=True, offer_home=True, atype=atype).order_by('-created')[:HOME_ITEMS]
+        else:
+            articles = Article.objects.filter(translation_of__isnull=True, published=True, atype=atype).order_by('-created')
     else:
         try:
             ctg = Category.objects.get(name=category)
         except Exception as ex:
             msg = f'category {category} unknown'
             messages.add_message(request, messages.ERROR, msg)
-        articles = Article.objects.filter(translation_of__isnull=True, atype=atype, category=ctg.pk).order_by('-created')
+        articles = Article.objects.filter(translation_of__isnull=True, published=True, atype=atype, category=ctg.pk).order_by('-created')
             
     translations = dict()
     for article in articles:
@@ -424,7 +434,8 @@ def index(request, category='', atype=MASTER_TYPE):
              'translations': translations,
              'category': category,
              'atype': atype,
-             'page_id': f'index {category} {atype}'}
+             'page_id': f'index {category} {atype}',
+             'home': home, }
     
     return render( request, 'index.html', data )
 
@@ -488,7 +499,6 @@ def rough_docinfos(content):
     
     note: all unknown fields are discarded'''
             
-    #pdb.set_trace()
     
     infos = dict()
     #field_names = []
@@ -501,12 +511,11 @@ def rough_docinfos(content):
     stree = stree.replace('<document source="<string>">', '<document source="string">')
     stree = stree.replace('&', '&amp;')
     stree = stree.replace('["', '[&quot;')
-    stree = stree.replace('"]', '&quot;]')
+    stree = stree.replace('"]', '&quot;]')   # to debug: load this one in text editor
 
     etree = ET.fromstring(stree) # line 1 col 18 errore
     
-    #fn = f"./docinfo/field[@classes='markup']/field_name"
-    #n = etree.find(fn)
+    # pdb.set_trace()
     for fname in settings.RSTBLOG.get('FIELDS'):
         if fname == 'authors':
             if 'authors' in settings.RSTBLOG.get('FIELDS'):
@@ -516,35 +525,16 @@ def rough_docinfos(content):
                     infos['authors'] = authors
         else:
             try:
-                sbody = f"./docinfo/field[@classes='{ fname }']/field_body/paragraph"
+                # _ are converted in - in xml class names
+                cname = fname[:] if not '_' in fname else fname.replace('_', '-')
+                sbody = f"./docinfo/field[@classes='{ cname }']/field_body/paragraph"
                 body = etree.find(sbody).text
                 body = body.replace('\n', ' ')
                 body = body.strip()
                 infos[fname] = body[:]
             except:
                 pass
-            
-    #field_names = etree.findall("./docinfo/field/field_name")
-    #field_bodies = etree.findall("./docinfo/field/field_body/paragraph")
-    ##authors = etree.findall("./docinfo/authors")
-    #if ( len(field_names) > 0 
-    #   and len(field_bodies) > 0
-    #   and len(field_names) == len(field_bodies) ):
-    #    names = [n.text.lower() for n in field_names]
-    #    bodies = [b.text for b in field_bodies]
-    #    #pdb.set_trace()
-    #        
-    #    for name, body in zip(names, bodies):
-    #        if name in settings.RSTBLOG.get('FIELDS'):
-    #            body = body.replace('\n', ' ')
-    #            body = body.strip()
-    #            infos[name] = body
-    #if 'authors' in settings.RSTBLOG.get('FIELDS'):
-    #    authors = None
-    #    authors = get_field(content, 'authors')
-    #    if authors:
-    #        infos['authors'] = authors
-    
+                
     return infos
 
     
@@ -574,9 +564,13 @@ def docinfos(content):
             # check https://stackoverflow.com/questions/466345/converting-string-into-datetime
             body = datetime.strptime(body, '%Y-%m-%d %H:%M:%S')
             # how use pytz? pytz.timezone(settings.TIME_ZONE)
-            #pdb.set_trace()
             body = pytz.timezone(settings.TIME_ZONE).localize(body)
             infos[name] = body
+        # elaborate boolean fields (published, offer home): no -> False
+        if name in settings.RSTBLOG.get('BOOL_FIELDS'):
+            #pdb.set_trace()
+            body = body.lower()
+            infos[name] = False if body == 'no' else True
         # preelaborate authors
         if name in settings.RSTBLOG.get('LIST_FIELDS'):
             #pdb.set_trace()

@@ -28,9 +28,14 @@ except:
 try:
     TYPES = settings.RSTBLOG['types']
 except:
-    LANGUAGES = { 'article': 'article',
+    TYPES = { 'article': 'article',
                   'page':    'page', }
 
+try:
+    HOME_ITEMS = settings.RSTBLOG['HOME_ITEMS']
+except:
+    HOME_ITEMS = 10
+                  
 class SUFFIX(object):
     reST = '.rst'
     markdown = '.md'
