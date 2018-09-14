@@ -124,7 +124,7 @@ using reST syntax.
 *Acceptable values* for this field are: ``markdown``, ``restructuredtext`` [2]_,
 ``html``.
 
-*Optionale*: no.
+*Optional*: no.
 
 Example::
 
@@ -166,7 +166,7 @@ Example:
   :title: Speaking about Cicero
   
 created and modified 
-^^^^^^^^^^^^^^^^^^^^*
+^^^^^^^^^^^^^^^^^^^^^
 
 These are two fields showing:
 
@@ -346,7 +346,7 @@ of article already known by ``rstblog``. If is this the case, in this field
 you write the title of the *original* (translated) article.
 
 If this field is missing, the article is an *original* article, meaning
-it is a principal article whatever would be its language.
+it is a principal article whatever its language.
 
 *Accepted values*. A title of an article **present** in the blog database.
 
@@ -399,9 +399,7 @@ And we added:
 published
 ^^^^^^^^^^^^^^^
 
-Again: another field name not quoted in the `article about Marco Tullius Cicero`_.
-This is about considering published, or not, the article
-
+This is about considering published, or not, the article.
 Usually ``rstblog`` regards an article as published by default, unless the article
 author sets this filed to ``no`` [5]_. An **unpublished** article:
 
@@ -424,7 +422,7 @@ Example::
 offer_home
 ^^^^^^^^^^^^^^^
 
-This is about to show the article in the blog home index.
+``offer_home`` is about to show the article in the blog home index.
 
 ``rstblog`` shows in its home some, usually 20 [6]_, newer articles, checking their 
 creation dates.
@@ -437,13 +435,14 @@ in home, you can set this field to ``no``.
 *Default value*: ``yes``.
 
 *Optional*: yes.
+
 Example::
 
-  :published: yes
+  :offer_home: yes
 
 
-
-
+Author manual end
+---------------------
   
 That's all folk about author manual. 
 Thank you to read it. We hope you enjoy it.
