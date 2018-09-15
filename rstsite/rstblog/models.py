@@ -135,10 +135,10 @@ class Article(models.Model):
     image = models.CharField(
         'image',
         max_length=MEDIUM_LEN,
-        null=True,
-        blank=False,
+        null=False,
+        blank=True,
         unique=False,
-        default=None, )
+        default='', )
     language = models.CharField(
         'language',
         max_length = 2,
@@ -163,8 +163,8 @@ class Article(models.Model):
     summary = models.CharField(
         'summary',
         max_length=LONG_LEN,
-        null=True,
-        blank=False,
+        null=False,
+        blank=True,
         default='', )
     slug = models.SlugField(
         'slug',
@@ -204,6 +204,7 @@ class Article(models.Model):
         Author,
         related_name='wrote',
         verbose_name='authors',
+        blank=True,
         default=None, )
     category = models.ForeignKey(      # link to category
         Category,
@@ -226,7 +227,12 @@ class Article(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('rstblog:show', args=[self.slug])
+        if self.atype == 'article':
+            return reverse('rstblog:show', args=[self.slug])
+        elif self.atype == 'page':
+            return reverse('show', args=[self.slug])
+        else:
+            raise ValueError(f'type {self.atype} not handled')
         
     def get_translations(self):
         #pdb.set_trace()

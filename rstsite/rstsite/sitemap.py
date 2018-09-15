@@ -24,19 +24,19 @@ class IndexSitemap(sitemaps.Sitemap):
         else:
             return reverse(obj)
         
-        
-class PagesSitemap(sitemaps.Sitemap):
-    protocol = 'https'
-    priority = 0.5
+# no more needed, see urls.py #46,47 comment
+# class PagesSitemap(sitemaps.Sitemap):
+    # protocol = 'https'
+    # priority = 0.5
     
-    def __init__(self, names):
-        self.names = names
+    # def __init__(self, names):
+        # self.names = names
 
-    def items(self):
-        return self.names
+    # def items(self):
+        # return self.names
 
-    def location(self, obj):
-        return reverse('show', args=[obj])
+    # def location(self, obj):
+        # return reverse('show', args=[obj])
         
 
 class MediaSitemap(sitemaps.Sitemap):

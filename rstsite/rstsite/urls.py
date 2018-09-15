@@ -27,7 +27,7 @@ from django.urls    import path
 
 from . import views
 from .sitemap import IndexSitemap
-from .sitemap import PagesSitemap
+#from .sitemap import PagesSitemap
 from .sitemap import MediaSitemap
 from .sitemap import PlainSitemap
 from rstblog.models import Article
@@ -42,7 +42,8 @@ for category in categories:
   
 
 articles_dict = {
-    #'queryset': Article.objects.filter(translation_of__isnull=True),
+    # the next line is valid for articles AND pages
+    #    so PageSitemap is no more needed
     'queryset': Article.objects.filter(published=True).order_by('-created'),
     'date_field': 'modified',
 }
@@ -54,8 +55,8 @@ sitemaps= {
                              ['rstblog:index_all_categories', 'article',],
                              *search_by_category,
                              ]),
-    'pages': PagesSitemap(['author.rst',
-                           'formazione.rst',]),
+    #'pages': PagesSitemap(['author.rst',
+    #                       'formazione.rst',]),
     'media': MediaSitemap(['pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf',]),
     'plain': PlainSitemap(['robots.txt',
                            'sitemap.xml',]),
