@@ -35,10 +35,13 @@ from rstblog.models import Category
 
 # this to create urls about search articles by categories
 #    to pass to IndexSitemap in sitemaps section
-categories = Category.objects.values_list('name', flat=True)
 search_by_category = []
-for category in categories:
-    search_by_category.append(['rstblog:index_category', category[:], 'article',])
+try:
+    categories = Category.objects.values_list('name', flat=True)
+    for category in categories:
+        search_by_category.append(['rstblog:index_category', category[:], 'article',])
+except:
+    pass
   
 
 articles_dict = {

@@ -37,7 +37,7 @@ class Author(models.Model):
         - username
         - '''
     username = models.CharField(
-        'name',
+        'username',
         max_length=SHORT_LEN,
         null=True,
         blank=True,
