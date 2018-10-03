@@ -23,7 +23,7 @@ General introduction
 -----------------------
 
 This project is developed using Django_, a web framework based on the
-Python_ language. And this fact is important to you *only if you
+Python_ language. This fact is important to you *only if you
 wish to modify how the project work*. In other words if you need to change 
 the programming code of the project.
 
@@ -52,14 +52,12 @@ navigate to ``https://my.blog.org/blog/load-article``.
 will request to you what file you need to load. Browse to it
 and click the send button. ``rstblog`` will respond you: *article xxx loaded* [#]_
 
-We are done: homepage at ``https://my-blog.org`` will show the title
+We are done: homepage at ``https://my.blog.org`` will show the title
 and summary of your new article. And if you click on title, you'll
 see your article in all its glory.
 
 Well, there is some little trick to use to obtain the right result. But
-I swear: it's all very simple.
-
-Otherwise I would not be able to use it.
+I swear: it's all very simple. Otherwise I would not be able to use it.
 
 Now. I imagine you are asking yourself: "for God's sake: why I need
 use a text editor and upload a file to my site, if wordpress_ or
@@ -98,7 +96,8 @@ form of *source* format. The simpler it is, the better it is.
 
 So, returning to us, I decided to experiment to use a simple
 markup language, as reSt, or markdown, to write a local copy of the
-articles. And, while I'm living a full copy of them on my PC, I upload
+articles. And, while I'm living a full copy of them on my PC
+(this is a local backup, from start!), I upload
 them to a web server able to host them and catalog their contents
 by some simple fields written in the article file text.
 
