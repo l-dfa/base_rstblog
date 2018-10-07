@@ -237,7 +237,8 @@ def get_record(dst):
     return (record, authors, )
 
 
-@login_required(login_url="/login/")
+#@login_required(login_url="/login/")
+@login_required()
 def reset_article_table(request, dir=ARTICLES_DIR):
     '''clear and rebuild article table'''
     
@@ -317,7 +318,8 @@ def cOu_article_record(pth, must_be_original='ignore'):
         raise
     return article
     
-@login_required(login_url="/login/")
+#@login_required(login_url="/login/")
+@login_required()
 def load_article(request):
     '''load a reST|markup|html file and add/chg relative record '''
     
@@ -411,7 +413,6 @@ def index(request, category='', atype=''):
     #pdb.set_trace()
     if category=='':
         if home:
-            # MODIFY THIS ONE FROM SETTINGS PARAM
             articles = Article.objects.filter(translation_of__isnull=True, published=True, offer_home=True, atype=atype).order_by('-created')[:HOME_ITEMS]
         else:
             articles = Article.objects.filter(translation_of__isnull=True, published=True, atype=atype).order_by('-created')
@@ -436,8 +437,10 @@ def index(request, category='', atype=''):
              'atype': atype,
              'page_id': f'index {category} {atype}',
              'home': home, }
-    
-    return render( request, 'index.html', data )
+    if home:
+        return render( request, 'blog_home.html', data )
+    else:
+        return render( request, 'index.html', data )
 
 
     
