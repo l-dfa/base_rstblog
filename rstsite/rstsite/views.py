@@ -24,7 +24,8 @@ try:
 except:
     PAGES_DIR = Path(settings.BASE_DIR) / 'contents/pages'
 
-@login_required(login_url="/login/")
+#@login_required(login_url="/login/")
+@login_required()
 def load_page(request):
     '''load a reST|markup|html file '''
     
