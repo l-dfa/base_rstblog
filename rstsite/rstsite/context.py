@@ -14,6 +14,8 @@ def siteconf(request):
         'ABSTRACT': settings.RSTSITE.get('ABSTRACT', ''),
         'WTITLE':   settings.RSTSITE.get('WTITLE', ''),
         'WSUBTITLE': settings.RSTSITE.get('WSUBTITLE', ''),
+        'WLICENSE':    settings.RSTSITE.get('WLICENSE', ''),
+        'WLICENSEREF': settings.RSTSITE.get('WLICENSEREF', ''),
         }
     return cont
     
