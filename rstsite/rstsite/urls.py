@@ -62,7 +62,11 @@ sitemaps= {
     #                       'formazione.rst',]),
     'media': MediaSitemap(['pdfs/CV_luciano_de_falco_alfano-public-20180227.pdf',]),
     'plain': PlainSitemap(['robots.txt',
-                           'sitemap.xml',]),
+                           'sitemap.xml',
+                           'general-algebra/index.html',
+                           'general-algebra/genindex.html',
+                           'general-algebra/1-operazioni_tra_insiemi.html',
+                           ]),
     
 }
 
