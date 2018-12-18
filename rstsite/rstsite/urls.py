@@ -44,6 +44,7 @@ except:
     pass
   
 
+
 articles_dict = {
     # the next line is valid for articles AND pages
     #    so PageSitemap is no more needed
@@ -70,6 +71,7 @@ sitemaps= {
     
 }
 
+
 urlpatterns = [
     path('blog/', include('rstblog.urls', namespace='rstblog')),
     path('load-page', views.load_page, name='load_page'),
@@ -81,9 +83,10 @@ urlpatterns = [
     path('', views.index, name='index'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
-    #path('login/', auth_views.LoginView, {'template_name': 'users/registration/login.html',}, name='login'),
-    path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView, {'next_page': settings.LOGIN_REDIRECT_URL}, name='logout'), 
+    #path('login/', auth_views.login, {'template_name': 'login.html',}, name='login'), #-chg ldfa @2018-11-27
+    #path('logout/', auth_views.logout, {'next_page': '/login'}, name='logout'), #-chg ldfa @2018-11-27
+    path('login/', auth_views.LoginView.as_view(), name='login'),  #+chg ldfa @2018-11-27
+    path('logout/', auth_views.LogoutView, {'next_page': settings.LOGIN_REDIRECT_URL}, name='logout'),  #+chg ldfa @2018-11-27
 ]
 
 if settings.DEBUG is True:

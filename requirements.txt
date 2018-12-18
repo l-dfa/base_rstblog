@@ -7,6 +7,7 @@ colorama==0.3.9
 Django==2.1.2
 django-concurrency==1.4
 django-fullurl==0.5
+django-taggit==0.23.0
 docutils==0.14
 idna==2.7
 imagesize==1.0.0

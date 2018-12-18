@@ -18,6 +18,9 @@ from django.urls       import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+from taggit.managers import TaggableManager
+from taggit.models import TagBase, GenericTaggedItemBase
+
 from concurrency.fields import IntegerVersionField
 
 from .const import ARTICLES_DIR
@@ -28,6 +31,19 @@ SHORT_LEN  = 50
 MEDIUM_LEN = 250
 LONG_LEN   = 2000
 
+class LocTag(TagBase):
+    language = models.CharField(
+        verbose_name=_('language'),
+        max_length = 2,
+        null=False,
+        blank = False,
+        choices=list(LANGUAGES.items()),
+        default = list(LANGUAGES.keys())[0], )  # BEWARE.from py 3.6+ dict preserve keys order by insertion
+  
+    class Meta:
+        verbose_name = _("Tag")
+        verbose_name_plural = _("Tags")
+  
 class Author(models.Model):
     '''author: article author
     
@@ -72,14 +88,29 @@ class Category(models.Model):
     name = models.CharField(
         'name',
         max_length=SHORT_LEN,
-        null=False,
-        blank=False,
-        unique=True,)
+        null   = False,
+        blank  = False,)
+    language = models.CharField(
+        'language',
+        max_length = 2,
+        null    = False,
+        blank   = False,
+        choices = list(LANGUAGES.items()),
+        default = list(LANGUAGES.keys())[0], )  # BEWARE.in py 3.6+ dict preserve keys order by insertion
+    translation_of = models.ForeignKey(         # link to original category
+        'self',
+        on_delete=models.SET_DEFAULT,
+        null=True,
+        blank=True,
+        related_name='translated_by',
+        verbose_name='translation_of',
+        default=None, )
         
     def __str__(self):
         return self.name
 
     class Meta:
+        unique_together = ('name', 'language',)
         verbose_name_plural = "categories"
 
         
@@ -144,9 +175,7 @@ class Article(models.Model):
         max_length = 2,
         null=False,
         blank = False,
-        #choices=LANGUAGE,
         choices=list(LANGUAGES.items()),
-        #default = ITALIAN, )
         default = list(LANGUAGES.keys())[0], )  # BEWARE.from py 3.6+ dict preserve keys order by insertion
     markup = models.CharField(
         'markup_language',
@@ -187,6 +216,11 @@ class Article(models.Model):
         default=True, )
     offer_home = models.BooleanField(
         'offer article for home',
+        null=False,
+        blank = False,
+        default=True, )
+    image_in_content = models.BooleanField(
+        'show article image in content',
         null=False,
         blank = False,
         default=True, )
@@ -275,13 +309,15 @@ class ArticleForm(forms.ModelForm):
             'slug', 'atype', 'published', 'offer_home', 'hit',
             'authors', 
             'category',
-            'translation_of', )
+            'translation_of',
+            'image_in_content', )
     def clean_slug(self):
         return self.cleaned_data['slug'] or None
 
         
 class ArticleAdmin(admin.ModelAdmin):
     form = ArticleForm
+    list_display = ('title', 'language')
 
     
 class AuthorForm(forms.ModelForm):
@@ -296,4 +332,11 @@ class AuthorAdmin(admin.ModelAdmin):
     form = AuthorForm
 
     
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ('name', 'language', 'translation_of', )
     
+class CategoryAdmin(admin.ModelAdmin):
+    form = CategoryForm
+    list_dispay = ('language', 'name')
