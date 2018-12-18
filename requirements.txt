@@ -4,8 +4,10 @@ beautifulsoup4==4.6.0
 certifi==2018.4.16
 chardet==3.0.4
 colorama==0.3.9
-Django==2.0.7
+Django==2.1.2
 django-concurrency==1.4
+django-fullurl==0.5
+django-taggit==0.23.0
 docutils==0.14
 idna==2.7
 imagesize==1.0.0
@@ -15,8 +17,9 @@ MarkupSafe==1.0
 packaging==17.1
 Pygments==2.2.0
 pyparsing==2.2.0
+python-markdown-math==0.6
 pytz==2018.5
-requests==2.19.1
+requests==2.20.1
 six==1.11.0
 snowballstemmer==1.2.1
 Sphinx==1.7.5

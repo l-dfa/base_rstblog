@@ -206,9 +206,9 @@ def get_record(dst):
             from authors.
     '''
     
-    file_content = get_file_content(dst)
+    file_content = get_file_content(dst)             # grab the article's file overall content 
     #pdb.set_trace()
-    result = separate(file_content.decode('utf-8'))
+    result = separate(file_content.decode('utf-8'))  # split (using "hic sunt leones") the overall content in => (attributes, content, ) tuple of strings
     if result:
         attributes, content = result
         record = docinfos(attributes)
@@ -281,7 +281,7 @@ def cOu_article_record(pth, must_be_original='ignore'):
     '''create or update article record from Path
     
     parameters:
-        - pth                   Path, to file to use
+        - pth                   Path, file to use
         - must_be_original      str, 'yes', 'no', 'ignore' (or whatever else)
                                   if 'yes' elaborate file only if original
                                   'no' elaborate only if translation
@@ -289,12 +289,12 @@ def cOu_article_record(pth, must_be_original='ignore'):
     
     return:
         - article record
-        - None if ignore file
+        - None if refused file
         - could raise exception '''
            
     article = None
     try:
-        record, authors = get_record(pth)
+        record, authors = get_record(pth)            # get fields infos from file
         # if: must be original and is a translation
         #     OR: must be translation and is original
         #   BAIL OUT with None
@@ -330,7 +330,7 @@ def load_article(request):
             try:
                 #pdb.set_trace()
                 dst = upload_file(request, item_type='article', dirdst = Path(ARTICLES_DIR))
-                article = cOu_article_record(dst, must_be_original='ignore')
+                article = cOu_article_record(dst, must_be_original='ignore')       # create or update article record
                 msg = 'article {} loaded'.format( dst.name, )
                 messages.add_message(request, messages.INFO, msg)
             except Exception as ex:
@@ -492,8 +492,7 @@ def get_field(area, field):
 def rough_docinfos(content):
     '''get docinfo fields from content
     
-    params:
-        - content    str, reST document
+    params: content    str, reST document of fields (i.e.: ":markup:   restructuredtext\n:language: en\n...")
     
     return: a dict with field names as keys and field bodies as values 
     
@@ -552,9 +551,11 @@ def docinfos(content):
             - None, if translated article is not found
             - in case value=='', dictionary voice is deleted'''
             
-    #pdb.set_trace()
     
     infos = rough_docinfos(content)
+    #pdb.set_trace()
+    if 'language' not in infos:
+        infos['language'] =  settings.RSTBLOG.get('languages', {'en': 'english',}).keys()[0] # set language at default if not declared in article
 
     # elaborate category, authors, created, modified
     for name, body in infos.items():
@@ -590,8 +591,9 @@ def docinfos(content):
         # check category
         if name == 'category':
             category = None
+            language = list(LANGUAGES.keys())[0]  # BEWARE.from py 3.6+ dict preserve keys order by insertion
             try:
-                category = Category.objects.get(name=body)
+                category = Category.objects.get(name=body, language=language)
             except:
                 category = Category.objects.get(name='uncategorized')
             if category:
