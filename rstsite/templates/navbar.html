@@ -60,8 +60,11 @@
                   </li>
               </ul>
             </li>
-            <li class="nav-item soiola">  <!-- Statistics -->
+            <li class="nav-item soiola">  <!-- Incomplete algebra -->
               <a class="nav-link soiola nitem-size" href="//{{ request.get_host }}/general-algebra/index.html" style="border:0;padding:0px 5px;">Incomplete algebra</a>
+            </li>
+            <li class="nav-item {%if page_id == 'show links.rst' %}active{% endif %} soiola">  <!-- Statistics -->
+              <a class="nav-link soiola nitem-size" href="{% url 'show' 'links.rst' %}" style="border:0;padding:0px 5px;">Links</a>
             </li>
             <li class="nav-item {%if page_id == 'rstblog:show_stats' %}active{% endif %} soiola">  <!-- Statistics -->
               <a class="nav-link soiola nitem-size" href="{% url 'rstblog:show_stats' %}" style="border:0;padding:0px 5px;">Statistics</a>

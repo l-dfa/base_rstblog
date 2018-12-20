@@ -311,6 +311,7 @@ class ArticleForm(forms.ModelForm):
             'category',
             'translation_of',
             'image_in_content', )
+            
     def clean_slug(self):
         return self.cleaned_data['slug'] or None
 
