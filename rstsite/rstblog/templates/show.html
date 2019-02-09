@@ -80,7 +80,7 @@
             </p>
         </div>
     {% endif %}
-    {% if article.image != None and article.image_in_content %}
+    {% if article.image != None and article.image|length > 0 and article.image_in_content %}
         <div style="float:left;">
             {% with "/media/images/"|add:article.image as img %}
                 <img class="container-fluid hidden-xs soiola" src="{{ img }}" alt="{{article.image}}" style="width:240px;">

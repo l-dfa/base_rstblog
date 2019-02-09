@@ -35,7 +35,7 @@
         
     <!-- </div> -->
     <div>
-    {% if article.image != None %}
+    {% if article.image != None and article.image|length > 0 %}
         <div style="float:left;">
             {% with "/media/images/"|add:article.image as img %}
                 <img class="hidden-xs soiola" src="{{ img }}" alt="{{article.image}}" style="width:120px;">

@@ -48,7 +48,7 @@ except:
 articles_dict = {
     # the next line is valid for articles AND pages
     #    so PageSitemap is no more needed
-    'queryset': Article.objects.filter(published=True).order_by('-created'),
+    'queryset': Article.objects.filter(published=True).exclude(title='banner').order_by('-created'),
     'date_field': 'modified',
 }
 
@@ -67,6 +67,19 @@ sitemaps= {
                            'general-algebra/index.html',
                            'general-algebra/genindex.html',
                            'general-algebra/1-operazioni_tra_insiemi.html',
+                           'general-algebra/2.0-algebra_di_boole.html',
+                           'csd-appunti/index.html',
+                           'csd-appunti/01_regular_expressions.html',
+                           'csd-appunti/03_bisimulation.html',
+                           'csd-appunti/04_ccs.html',
+                           'csd-appunti/05_pc.html',
+                           'csd-appunti/06_fifo.html',
+                           'csd-appunti/07_pipe.html',
+                           'csd-appunti/08_buff.html',
+                           'csd-appunti/09_model_checking.html',
+                           'csd-appunti/97_base_concepts.html',
+                           'csd-appunti/98_references.html',
+                           'csd-appunti/genindex.html',
                            ]),
     
 }
@@ -85,7 +98,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #path('login/', auth_views.login, {'template_name': 'login.html',}, name='login'), #-chg ldfa @2018-11-27
     #path('logout/', auth_views.logout, {'next_page': '/login'}, name='logout'), #-chg ldfa @2018-11-27
-    path('login/', auth_views.LoginView.as_view(), name='login'),  #+chg ldfa @2018-11-27
+    path('login/', auth_views.LoginView.as_view(), name='login'),                #+chg ldfa @2018-11-27
     path('logout/', auth_views.LogoutView, {'next_page': settings.LOGIN_REDIRECT_URL}, name='logout'),  #+chg ldfa @2018-11-27
 ]
 

@@ -442,14 +442,14 @@ def show(request, slug=''):
     #        raise ValueError(f'{article.markup} is a markup language not supported (yet)')
     #except:
     #    raise Http404()
-    #
-    ## increments article counter, if fails probably due to concurrent writes: ignoring it
-    #try:
-    #    article.hit += 1
-    #    article.save()
-    #except:
-    #    pass
     ##### END   this lines moved to article_as_html
+    
+    # increments article counter, if fails probably due to concurrent writes: ignoring it
+    try:
+        article.hit += 1
+        article.save()
+    except:
+        pass
 
     data = { 'content': content, 
              'infos': infos,
@@ -457,6 +457,7 @@ def show(request, slug=''):
              'translations': translations,
              'markup': markup, }
              
+    #pdb.set_trace()
     return render( request, 'show.html', data, )
 
 
@@ -474,7 +475,7 @@ def index(request, category='', atype=''):
     if category=='':
         if home:
             try:
-                banner = Article.objects.get(title='banner', atype='page')
+                banner = Article.objects.get(title='banner', published=True, offer_home=True, atype='page') # 2019-01-09 13:52:37 ldfa +/- check published & offer_home
             except:
                 pass
             articles = Article.objects.filter(translation_of__isnull=True, published=True, offer_home=True, atype=atype).order_by('-created')[:HOME_ITEMS]

@@ -20,7 +20,7 @@ Blog home
 {% endblock %}
 
 {% block content %}
-    <div class="container" style="background-color:WhiteSmoke;">
+    <div class="container" style="background-color:WhiteSmoke;overflow-y:auto;">
         {% if banner_content %}
             <div class="banner" style="margin:10px 0px;background-color:White;box-shadow:1px 1px LightGrey;border-radius:4px;">
                 {{ banner_content | safe }}
@@ -33,7 +33,7 @@ Blog home
                                  {% else %}
                                      <i>{{category}}</i> category
                                  {% endif %}
-                                     </h3>
+        </h3>
         {% if articles|length > 0 %}
             <div class="row" style="margin:10px 0px;background-color:White;box-shadow:1px 1px LightGrey;border-radius:4px;">  <!-- opening flex-container -->
                 {% include "article_evidence.html" %}

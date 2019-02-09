@@ -60,10 +60,21 @@
                   </li>
               </ul>
             </li>
-            <li class="nav-item soiola">  <!-- Incomplete algebra -->
-              <a class="nav-link soiola nitem-size" href="//{{ request.get_host }}/general-algebra/index.html" style="border:0;padding:0px 5px;">Incomplete algebra</a>
+            
+            <li class="dropdown soiola">        <!-- Speaking about -->
+              <a class="dropdown-toggle soiola nitem-size" data-toggle="dropdown" href="#">Speaking about<span class="caret"></span></a>
+              <ul class="dropdown-menu soiola">
+                  <li class="nav-item soiola">  <!-- Speaking about / General algebra -->
+                    <a class="nav-link soiola nitem-size" href="//{{ request.get_host }}/general-algebra/index.html" style="border:0;padding:0px 5px;">Algebra astratta (incompleto)</a>
+                  </li>
+                  <!-- <li class="divider"><hr></li> -->
+                  <li class="nav-item soiola">  <!-- Speaking about / Complex systems design - appunti -->
+                    <a class="nav-link soiola nitem-size" href="//{{ request.get_host }}/csd-appunti/index.html" style="border:0;padding:0px 5px;">Complex systems design: appunti</a>
+                  </li>
+              </ul>
             </li>
-            <li class="nav-item {%if page_id == 'show links.rst' %}active{% endif %} soiola">  <!-- Statistics -->
+            
+            <li class="nav-item {%if page_id == 'show links.rst' %}active{% endif %} soiola">  <!-- Links -->
               <a class="nav-link soiola nitem-size" href="{% url 'show' 'links.rst' %}" style="border:0;padding:0px 5px;">Links</a>
             </li>
             <li class="nav-item {%if page_id == 'rstblog:show_stats' %}active{% endif %} soiola">  <!-- Statistics -->
