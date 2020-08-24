@@ -45,6 +45,10 @@
               </ul>
             </li>
           
+            <li class="nav-item soiola">  
+              <a class="nav-link soiola nitem-size" href="https://covid.defalcoalfano.it" style="border:0;padding:0px 5px;">Covid</a>
+            </li>
+          
             <li class="dropdown soiola">        <!-- Author submenu -->
               <a class="dropdown-toggle soiola nitem-size" data-toggle="dropdown" href="#">Author<span class="caret"></span></a>
               <ul class="dropdown-menu soiola">
@@ -57,6 +61,9 @@
                   </li>
                   <li class="nav-item soiola">  <!-- Author submenu / Curriculum Vitae -->
                     <a class="nav-link soiola nitem-size" href="/media/pdfs/CV_luciano_de_falco_alfano-public.pdf" style="border:0;padding:2px;">Curriculum Vitae</a>
+                  </li>
+                  <li class="nav-item {%if page_id == 'show interessi.rst' %}active{% endif %} soiola">  <!-- Author submenu / Interessi -->
+                    <a class="nav-link soiola nitem-size" href="{% url 'show' 'interessi.rst' %}" style="border:0;padding:2px;">Interessi</a>
                   </li>
               </ul>
             </li>
@@ -71,15 +78,57 @@
                   <li class="nav-item soiola">  <!-- Speaking about / Complex systems design - appunti -->
                     <a class="nav-link soiola nitem-size" href="//{{ request.get_host }}/csd-appunti/index.html" style="border:0;padding:0px 5px;">Complex systems design: appunti</a>
                   </li>
+                  <li class="nav-item soiola">  <!-- Speaking about / Embedded Systems: Architecture - appunti -->
+                    <a class="nav-link soiola nitem-size" href="//{{ request.get_host }}/esa-appunti/index.html" style="border:0;padding:0px 5px;">Embedded Systems: Architecture - appunti (incompleto)</a>
+                  </li>
+                  <li class="nav-item soiola">  <!-- Speaking about / Distributed Systems -->
+                    <a class="nav-link soiola nitem-size" href="//{{ request.get_host }}/ds-appunti/index.html" style="border:0;padding:0px 5px;">Distributed systems: appunti</a>
+                  </li>
+                  <li class="nav-item soiola">  <!-- Speaking about / IT Security: Foundation -->
+                    <a class="nav-link soiola nitem-size" href="//{{ request.get_host }}/itsf-appunti/index.html" style="border:0;padding:0px 5px;">IT Security: Foundation; appunti (incompleto)</a>
+                  </li>
+                  <li class="nav-item soiola">  <!-- Speaking about / Networking Fundamentals -->
+                    <a class="nav-link soiola nitem-size" href="//{{ request.get_host }}/nf-appunti/index.html" style="border:0;padding:0px 5px;">Networking fundamentals: appunti (incompleto)</a>
+                  </li>
               </ul>
             </li>
-            
-            <li class="nav-item {%if page_id == 'show links.rst' %}active{% endif %} soiola">  <!-- Links -->
-              <a class="nav-link soiola nitem-size" href="{% url 'show' 'links.rst' %}" style="border:0;padding:0px 5px;">Links</a>
+
+            <li class="dropdown soiola">        <!-- resources -->
+              <a class="dropdown-toggle soiola nitem-size" data-toggle="dropdown" href="#">Resources<span class="caret"></span></a>
+              <ul class="dropdown-menu soiola">
+                  <li class="nav-item {%if page_id == 'show approfondimenti.rst' %}active{% endif %} soiola">  <!-- Resources / Approfondimenti -->
+                    <a class="nav-link soiola nitem-size" href="{% url 'show' 'approfondimenti.rst' %}" style="border:0;padding:2px;">Approfondimenti</a>
+                  </li>
+                  <li class="nav-item {%if page_id == 'show citazioni.rst' %}active{% endif %} soiola">  <!-- Resources / Citazioni -->
+                    <a class="nav-link soiola nitem-size" href="{% url 'show' 'citazioni.rst' %}" style="border:0;padding:2px;">Citazioni</a>
+                  </li>
+                <li class="nav-item {%if page_id == 'show links.rst' %}active{% endif %} soiola">  <!-- Links -->
+                  <a class="nav-link soiola nitem-size" href="{% url 'show' 'links.rst' %}" style="border:0;padding:2px;">Links</a>
+                </li>
+                  <li class="nav-item {%if page_id == 'show altre_risorse.rst' %}active{% endif %} soiola">  <!-- Resources / Altre risorse -->
+                    <a class="nav-link soiola nitem-size" href="{% url 'show' 'altre_risorse.rst' %}" style="border:0;padding:2px;">Altre risorse</a>
+                  </li>
+              </ul>
             </li>
-            <li class="nav-item {%if page_id == 'rstblog:show_stats' %}active{% endif %} soiola">  <!-- Statistics -->
+
+            
+            <li class="dropdown soiola">        <!-- site -->
+              <a class="dropdown-toggle soiola nitem-size" data-toggle="dropdown" href="#">Site<span class="caret"></span></a>
+              <ul class="dropdown-menu soiola">
+                  <li class="nav-item {%if page_id == 'show about.rst' %}active{% endif %} soiola">  <!-- Site / About -->
+                    <a class="nav-link soiola nitem-size" href="{% url 'show' 'about.rst' %}" style="border:0;padding:2px;">About</a>
+                  </li>
+                <li class="nav-item {%if page_id == 'rstblog:show_stats' %}active{% endif %} soiola">  <!-- Site / Statistics -->
+                  <a class="nav-link soiola nitem-size" href="{% url 'rstblog:show_stats' %}" style="border:0;padding:2px;">Statistics</a>
+                </li>
+              </ul>
+            </li>
+
+            <!-- future memory
+            <li class="nav-item {%if page_id == 'rstblog:show_stats' %}active{% endif %} soiola">  
               <a class="nav-link soiola nitem-size" href="{% url 'rstblog:show_stats' %}" style="border:0;padding:0px 5px;">Statistics</a>
             </li>
+            -->
           </ul>
         </div>
       </div>

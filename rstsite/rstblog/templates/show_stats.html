@@ -18,6 +18,7 @@
     <!--<div style="border: 2px solid green; padding:0px 5px;">-->
     <div class="container">
     <h3 class="hindex">Blog statistics</h3>
+        <h4>Overall hits: <b>{{ hits }}</b> </h4>
         {% for key, stats in all_stats.items %}
             <h4><i>{{ key }}</i> section</h4>
             <p>Number of <i>original</i> (not translations of) {{key}}s: {{ stats.n }}</p>

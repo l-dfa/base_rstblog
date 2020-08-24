@@ -45,6 +45,11 @@ from .const import HOME_ITEMS
 
 MASTER_TYPE = list(TYPES.keys())[0]
 
+'''
+Article.objects.all().Sum('hit')
+'''
+
+
 def get_stats(atype):
     ''' statistics about indicated atype:
     
@@ -86,7 +91,14 @@ def show_stats(request):
     for key in list(TYPES.keys()):
         stats = get_stats(key)  # 
         all_stats[key] = stats.copy()
+    hits = 0
+    for a in Article.objects.all():
+        if a.hit:
+            hits += a.hit
+    #hits = Article.objects.aggregate(Sum('hit'))  # why is this not functioning? because some of them are NULL ?
+
     data = { 'all_stats': all_stats,
+             'hits': hits,
              'page_id': 'rstblog:show_stats'    }
              
     return render( request, 'show_stats.html', data, )
@@ -322,7 +334,6 @@ def cOu_article_record(pth, must_be_original='ignore'):
 @login_required()
 def load_article(request):
     '''load a reST|markup|html file and add/chg relative record '''
-    
     article = None
     # load file to MEDIA_ROOT and move it to ARTICLES_DIR
     # then get fields from file content (docinfo section)
@@ -397,7 +408,8 @@ def article_as_html(article):
 def show(request, slug=''):
     '''shows a reStructuredText file as html'''
     #pdb.set_trace()
-    article = get_object_or_404(Article, published=True, slug=slug)
+    #article = get_object_or_404(Article, published=True, slug=slug)
+    article = get_object_or_404(Article, slug=slug)
     
     # preparing translations as [(language, slug), (language, slug), ...]
     trans = article.get_translations()
@@ -478,7 +490,7 @@ def index(request, category='', atype=''):
                 banner = Article.objects.get(title='banner', published=True, offer_home=True, atype='page') # 2019-01-09 13:52:37 ldfa +/- check published & offer_home
             except:
                 pass
-            articles = Article.objects.filter(translation_of__isnull=True, published=True, offer_home=True, atype=atype).order_by('-created')[:HOME_ITEMS]
+            articles = Article.objects.filter(translation_of__isnull=True, published=True, offer_home=True, atype=atype).order_by('-evidence', '-created')[:HOME_ITEMS] # 2020-03-10 18:19:13 ldfa added order_by evidence
         else:
             articles = Article.objects.filter(translation_of__isnull=True, published=True, atype=atype).order_by('-created')
     else:
@@ -629,6 +641,16 @@ def docinfos(content):
     #pdb.set_trace()
     if 'language' not in infos:
         infos['language'] =  settings.RSTBLOG.get('languages', {'en': 'english',}).keys()[0] # set language at default if not declared in article
+    if 'insert_author' not in infos:
+        insert_author = False
+    else:
+        insert_author = True if infos['insert_author'].lower() == 'yes' else False
+        del infos['insert_author']
+    if 'insert_category' not in infos:
+        insert_category = False
+    else:
+        insert_category = True if infos['insert_category'].lower() == 'yes' else False
+        del infos['insert_category']
 
     # elaborate category, authors, created, modified
     for name, body in infos.items():
@@ -655,7 +677,10 @@ def docinfos(content):
             for sauthor in body:
                 author = None
                 try:
-                    author = Author.objects.get(name=sauthor)
+                    if insert_author:
+                        author, created = Author.objects.get_or_create(name=sauthor)
+                    else:
+                        author = Author.objects.get(name=sauthor)
                 except:
                     continue
                 if author:
@@ -666,7 +691,10 @@ def docinfos(content):
             category = None
             language = list(LANGUAGES.keys())[0]  # BEWARE.from py 3.6+ dict preserve keys order by insertion
             try:
-                category = Category.objects.get(name=body, language=language)
+                if insert_category:
+                    category, created = Category.objects.get_or_create(name=body, language=language)
+                else:
+                    category = Category.objects.get(name=body, language=language)
             except:
                 category = Category.objects.get(name='uncategorized')
             if category:

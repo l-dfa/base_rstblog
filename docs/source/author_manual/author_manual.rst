@@ -232,8 +232,13 @@ Put here the name(s) of author(s) of the article (your name, I suppose :-).
 In case of multiple authors, keep them in one line and separate them using a 
 comma (,).
 
-*Accepted values*. Author name must be present in blog database. It is 
+*Accepted values*. Usually Author name must be present in blog database. It is 
 responsability of site manager to insert the names of accepted authors.
+
+If you are sure it is necessary to add a new Author, not
+yet present in database, you can force its creation using the
+*insert_author* control field (see below).
+
 
 *Optional*: yes.
 
@@ -244,15 +249,19 @@ Example:
   :authors:   Lawrence of Arabia
   
 category
-^^^^^^^^
+^^^^^^^^^
 
 This is the master of categorizations. It catalogs our article assigning
 it to a main type.
 
 *Accepted values*. Again, it depends on the configuration of your blog.
 It is responsability of site manager to insert the accepted categories
-in the blog database. And only  values present in this database are
+in the blog database. Usually only  values present in this database are
 accepted by ``rstblog``.
+
+If you are absolutly sure it is necessary to add a new category, not
+yet present in database, you can force its creation using the
+*insert_category* control field (see below).
 
 *Optional*: no.
 
@@ -440,6 +449,41 @@ in home, you can set this field to ``no``.
 Example::
 
   :offer_home: yes
+
+insert_author
+^^^^^^^^^^^^^^^
+
+This is a *control field* . It isn't stored in database. It's
+value is used from application logic to decide if an author not already
+existing in database has to be added to the database.
+
+*Accepted values*: ``yes`` or ``no``.
+
+*Default value*: ``no``.
+
+*Optional*: yes.
+
+Example::
+
+  :insert_author: yes
+
+insert_category
+^^^^^^^^^^^^^^^^^
+
+Another *control field* . This
+value is used from application logic to decide if a category not already
+existing in database has to be added to it.
+
+*Accepted values*: ``yes`` or ``no``.
+
+*Default value*: ``no``.
+
+*Optional*: yes.
+
+Example::
+
+  :insert_category: yes
+
 
 
 Author manual end

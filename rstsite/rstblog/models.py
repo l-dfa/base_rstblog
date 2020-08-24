@@ -219,6 +219,11 @@ class Article(models.Model):
         null=False,
         blank = False,
         default=True, )
+    evidence = models.BooleanField(                                     # 2020-03-10 18:19:13 ldfa added evidence
+        'article to keep in evidence (head of home page)',
+        null=False,
+        blank = False,
+        default=False, )
     image_in_content = models.BooleanField(
         'show article image in content',
         null=False,
@@ -306,7 +311,7 @@ class ArticleForm(forms.ModelForm):
         fields = ('title', 'created', 'file', 'image',
             'language', 'markup', 'modified',
             'summary',
-            'slug', 'atype', 'published', 'offer_home', 'hit',
+            'slug', 'atype', 'published', 'offer_home', 'evidence', 'hit',       # 2020-03-10 18:19:13 ldfa added evidence
             'authors', 
             'category',
             'translation_of',
@@ -318,7 +323,7 @@ class ArticleForm(forms.ModelForm):
         
 class ArticleAdmin(admin.ModelAdmin):
     form = ArticleForm
-    list_display = ('title', 'language')
+    list_display = ('title', 'language', 'hit')
 
     
 class AuthorForm(forms.ModelForm):
