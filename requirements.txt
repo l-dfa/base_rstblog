@@ -4,7 +4,7 @@ beautifulsoup4==4.6.0
 certifi==2018.4.16
 chardet==3.0.4
 colorama==0.3.9
-Django==2.2.11
+Django==2.2.27
 django-concurrency==1.4
 django-fullurl==0.5
 django-taggit==0.23.0
