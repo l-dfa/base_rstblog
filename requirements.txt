@@ -21,7 +21,7 @@ pyparsing==2.2.0
 python-markdown-math==0.6
 pytz==2018.5
 requests==2.20.1
-setuptools==28.8.0
+setuptools==65.5.1
 six==1.11.0
 snowballstemmer==1.2.1
 Sphinx==1.7.5
